@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
 
 	#region Variables
 	//Components
-    public Rigidbody2D RB { get; private set; }
+	public Rigidbody2D RB { get; private set; }
 
 	//Variables control the various actions the player can perform at any time.
 	//These are fields which can are public allowing for other sctipts to read them
@@ -39,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
 	public float LastPressedJumpTime { get; private set; }
 
 	//Set all of these up in the inspector
-	[Header("Checks")] 
+	[Header("Checks")]
 	[SerializeField] private Transform _groundCheckPoint;
 	//Size of groundCheck depends on the size of your character generally you want them slightly small than width (for ground) and height (for the wall check)
 	[SerializeField] private Vector2 _groundCheckSize = new Vector2(0.49f, 0.03f);
@@ -61,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private Collider2D _frontWallCheckCollider;
 	[SerializeField] private Collider2D _backWallCheckCollider;
 
-    [Header("Layers & Tags")]
+	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
 
 	// Reused buffer to avoid GC allocations during overlap checks
@@ -75,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool _warnedMissingGroundLayer;
 	#endregion
 
-    private void Awake()
+	private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
 		_mainCollider = GetComponent<Collider2D>();
@@ -290,8 +291,8 @@ public class PlayerMovement : MonoBehaviour
 		if (Data == null)
 			return;
 
-        #region TIMERS
-        LastOnGroundTime -= Time.deltaTime;
+		#region TIMERS
+		LastOnGroundTime -= Time.deltaTime;
 		LastOnWallTime -= Time.deltaTime;
 		LastOnWallRightTime -= Time.deltaTime;
 		LastOnWallLeftTime -= Time.deltaTime;
@@ -336,7 +337,7 @@ public class PlayerMovement : MonoBehaviour
 			if (grounded && !IsJumping) //checks if set box overlaps with ground
 			{
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
-            }		
+			}
 
 			//Right Wall Check
 			bool rightWall =
@@ -366,7 +367,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			IsJumping = false;
 
-			if(!IsWallJumping)
+			if (!IsWallJumping)
 				_isJumpFalling = true;
 		}
 
@@ -376,10 +377,10 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		if (LastOnGroundTime > 0 && !IsJumping && !IsWallJumping)
-        {
+		{
 			_isJumpCut = false;
 
-			if(!IsJumping)
+			if (!IsJumping)
 				_isJumpFalling = false;
 		}
 
@@ -401,7 +402,7 @@ public class PlayerMovement : MonoBehaviour
 			_isJumpFalling = false;
 			_wallJumpStartTime = Time.time;
 			_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
-			
+
 			WallJump(_lastWallJumpDir);
 		}
 		#endregion
@@ -449,14 +450,14 @@ public class PlayerMovement : MonoBehaviour
 			SetGravityScale(Data.gravityScale);
 		}
 		#endregion
-    }
+	}
 
-    private void FixedUpdate()
+	private void FixedUpdate()
 	{
 		if (Data == null)
 			return;
-		
-        //Handle Run
+
+		//Handle Run
 		if (IsWallJumping)
 			Run(Data.wallJumpRunLerp);
 		else
@@ -465,11 +466,11 @@ public class PlayerMovement : MonoBehaviour
 		//Handle Slide
 		if (IsSliding)
 			Slide();
-    }
+	}
 
-    #region INPUT CALLBACKS
+	#region INPUT CALLBACKS
 	//Methods which whandle input detected in Update()
-    public void OnJumpInput()
+	public void OnJumpInput()
 	{
 		LastPressedJumpTime = Data.jumpInputBufferTime;
 	}
@@ -479,18 +480,18 @@ public class PlayerMovement : MonoBehaviour
 		if (CanJumpCut() || CanWallJumpCut())
 			_isJumpCut = true;
 	}
-    #endregion
+	#endregion
 
-    #region GENERAL METHODS
-    public void SetGravityScale(float scale)
+	#region GENERAL METHODS
+	public void SetGravityScale(float scale)
 	{
 		RB.gravityScale = scale;
 	}
-    #endregion
+	#endregion
 
 	//MOVEMENT METHODS
-    #region RUN METHODS
-    private void Run(float lerpAmount)
+	#region RUN METHODS
+	private void Run(float lerpAmount)
 	{
 		//Calculate the direction we want to move in and our desired velocity
 		float targetSpeed = _moveInput.x * Data.runMaxSpeed;
@@ -527,11 +528,11 @@ public class PlayerMovement : MonoBehaviour
 
 		#region Conserve Momentum
 		//We won't slow the player down if they are moving in their desired direction but at a greater speed than their maxSpeed
-		if(Data.doConserveMomentum && Mathf.Abs(RB.linearVelocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(RB.linearVelocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
+		if (Data.doConserveMomentum && Mathf.Abs(RB.linearVelocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(RB.linearVelocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
 		{
 			//Prevent any deceleration from happening, or in other words conserve are current momentum
 			//You could experiment with allowing for the player to slightly increae their speed whilst in this "state"
-			accelRate = 0; 
+			accelRate = 0;
 		}
 		#endregion
 
@@ -554,16 +555,16 @@ public class PlayerMovement : MonoBehaviour
 	private void Turn()
 	{
 		//stores scale and flips the player along the x axis, 
-		Vector3 scale = transform.localScale; 
+		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
 
 		IsFacingRight = !IsFacingRight;
 	}
-    #endregion
+	#endregion
 
-    #region JUMP METHODS
-    private void Jump()
+	#region JUMP METHODS
+	private void Jump()
 	{
 		//Ensures we can't call Jump multiple times from one press
 		LastPressedJumpTime = 0;
@@ -611,39 +612,39 @@ public class PlayerMovement : MonoBehaviour
 	{
 		//Works the same as the Run but only in the y-axis
 		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
-		float speedDif = Data.slideSpeed - RB.linearVelocity.y;	
+		float speedDif = Data.slideSpeed - RB.linearVelocity.y;
 		float movement = speedDif * Data.slideAccel;
 		//So, we clamp the movement here to prevent any over corrections (these aren't noticeable in the Run)
 		//The force applied can't be greater than the (negative) speedDifference * by how many times a second FixedUpdate() is called. For more info research how force are applied to rigidbodies.
-		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
+		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
 
 		RB.AddForce(movement * Vector2.up);
 	}
-    #endregion
+	#endregion
 
 
-    #region CHECK METHODS
-    public void CheckDirectionToFace(bool isMovingRight)
+	#region CHECK METHODS
+	public void CheckDirectionToFace(bool isMovingRight)
 	{
 		if (isMovingRight != IsFacingRight)
 			Turn();
 	}
 
-    private bool CanJump()
-    {
+	private bool CanJump()
+	{
 		return LastOnGroundTime > 0 && !IsJumping;
-    }
+	}
 
 	private bool CanWallJump()
-    {
+	{
 		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0 && (!IsWallJumping ||
 			 (LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
 	}
 
 	private bool CanJumpCut()
-    {
+	{
 		return IsJumping && RB.linearVelocity.y > 0;
-    }
+	}
 
 	private bool CanWallJumpCut()
 	{
@@ -651,18 +652,18 @@ public class PlayerMovement : MonoBehaviour
 	}
 
 	public bool CanSlide()
-    {
+	{
 		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0)
 			return true;
 		else
 			return false;
 	}
-    #endregion
+	#endregion
 
 
-    #region EDITOR METHODS
-    private void OnDrawGizmosSelected()
-    {
+	#region EDITOR METHODS
+	private void OnDrawGizmosSelected()
+	{
 		// Prefer collider bounds when available; otherwise fall back to OverlapBox gizmos
 		Gizmos.color = Color.green;
 		if (_drawGroundRays && _useRaycastGroundCheck)
@@ -700,7 +701,15 @@ public class PlayerMovement : MonoBehaviour
 		else if (_backWallCheckPoint != null)
 			Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
 	}
-    #endregion
+	#endregion
+
+	// Called when the player should die (e.g., touched spikes)
+	public void Die()
+	{
+		// Reload the current scene to "respawn" the player
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+	}
+
 }
 
 // created by Dawnosaur :D
