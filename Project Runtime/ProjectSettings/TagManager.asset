@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - Platform
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Object
   - Water
   - UI
   - 
