@@ -62,12 +62,12 @@ public class Console1 : MonoBehaviour
             questionBox.SetActive(isQuestionVisible);
             Debug.Log("Question box visibility toggled: " + (isQuestionVisible ? "visible" : "hidden"));
         }
-        // enable or disable the player movement
-        Playerscript player = null;
+        // enable or disable the player movement when question box is open
+        PlayerMovement player = null;
 #if UNITY_2023_2_OR_NEWER
-        player = Object.FindFirstObjectByType<Playerscript>();
+        player = Object.FindFirstObjectByType<PlayerMovement>();
 #else
-        player = FindObjectOfType<Playerscript>();
+        player = FindObjectOfType<PlayerMovement>();
 #endif
 
         if (player != null)
@@ -77,7 +77,7 @@ public class Console1 : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Console1: No Playerscript found in the scene to toggle input.");
+            Debug.LogWarning("Console1: No PlayerMovement found in the scene to toggle input.");
         }
     }
 
