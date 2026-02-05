@@ -3129,7 +3129,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 81.71, y: -80.155, z: -10}
+  m_LocalPosition: {x: 69.1, y: -83.725, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8519,7 +8519,7 @@ Transform:
   m_GameObject: {fileID: 1094989965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 80.76, y: -81.28, z: 0}
+  m_LocalPosition: {x: 68.15, y: -84.85, z: 0}
   m_LocalScale: {x: 0.7690375, y: 0.64384335, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10383,6 +10383,7 @@ GameObject:
   - component: {fileID: 1316590498}
   - component: {fileID: 1316590497}
   - component: {fileID: 1316590496}
+  - component: {fileID: 1316590499}
   m_Layer: 0
   m_Name: DROPPLAT
   m_TagString: Untagged
@@ -10399,7 +10400,7 @@ Transform:
   m_GameObject: {fileID: 1316590494}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7058523, w: 0.70835906}
-  m_LocalPosition: {x: 52, y: 2.36, z: 0}
+  m_LocalPosition: {x: 51.86, y: 9.62, z: 0}
   m_LocalScale: {x: 4.0478644, y: 6.9641256, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10413,7 +10414,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1316590494}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -10536,6 +10537,43 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!70 &1316590499
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316590494}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 1.1014719, y: -0.00000002220125}
+  m_Size: {x: 3.202947, y: 1.8616976}
+  m_Direction: 0
 --- !u!1 &1331533818
 GameObject:
   m_ObjectHideFlags: 0
@@ -15789,7 +15827,7 @@ Transform:
   m_GameObject: {fileID: 2067325750}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 81.71, y: -80.155, z: -10}
+  m_LocalPosition: {x: 69.1, y: -83.725, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
