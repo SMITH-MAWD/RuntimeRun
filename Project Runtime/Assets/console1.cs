@@ -4,59 +4,101 @@ using UnityEngine;
 // (so this component can be found/loaded when referenced from a scene).
 public class console1 : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
-    public Color hoverColor = new Color(0.8f, 0.8f, 0.8f, 1f); // hover effect
-    private Color originalColor;
-    private bool isSetup = false;
-
     [Tooltip("Reference to the question box GameObject")]
     public GameObject questionBox;
     private bool isQuestionVisible = false;
 
     public BoxCollider2D boxCollider;
+    private PlayerMovement cachedPlayer;
+    private bool isPlayerInRange = false;
 
     void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        BoxCollider2D triggerCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
-        if (spriteRenderer == null)
+        if (boxCollider == null)
         {
-            Debug.LogWarning("Console1: No SpriteRenderer found on " + gameObject.name + ". Add a SpriteRenderer for visual feedback.");
+            Debug.LogWarning("Console1: No BoxCollider2D found on " + gameObject.name + ". Add a BoxCollider2D component with 'Is Trigger' enabled.");
         }
         else
         {
-            originalColor = spriteRenderer.color;
-            isSetup = true;
-        }
-
-        if (triggerCollider == null)
-        {
-            Debug.LogWarning("Console1: No BoxCollider2D found on " + gameObject.name + ". Add a BoxCollider2D component for click detection.");
+            // Ensure the collider is set as a trigger
+            boxCollider.isTrigger = true;
         }
 
         if (questionBox == null)
         {
-            Debug.LogWarning("Console1: Question Box not assigned. Assign the question box GameObject in the inspector.");
+            questionBox = GameObject.Find("question1");
+            if (questionBox == null)
+            {
+                Debug.LogWarning("Console1: Question Box not assigned. Assign the question box GameObject in the inspector.");
+            }
         }
-        else
+
+        if (questionBox != null)
         {
             // hiding the question box
             questionBox.SetActive(false);
             isQuestionVisible = false;
         }
+
+        // Cache the player to avoid Find() calls
+#if UNITY_2023_2_OR_NEWER
+        cachedPlayer = Object.FindFirstObjectByType<PlayerMovement>();
+#else
+        cachedPlayer = FindObjectOfType<PlayerMovement>();
+#endif
     }
 
-    void OnMouseDown()
+    void Update()
     {
-        // if the question box is missing, try to find by name???
-        if (questionBox == null)
+        // Check if player is in range and presses Q
+        if (isPlayerInRange && Input.GetKeyDown(KeyCode.Q))
         {
-            questionBox = GameObject.Find("question1");
-            if (questionBox == null)
-                Debug.LogWarning("Console1: questionBox not assigned and 'question1' GameObject not found in scene.");
+            OnConsoleInteract();
         }
+    }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Check if the colliding object has a PlayerMovement component
+        if (collision.CompareTag("Player") || collision.GetComponent<PlayerMovement>() != null)
+        {
+            isPlayerInRange = true;
+            Debug.Log("Console1: Player in range. Press Q to open console.");
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        // Check if the colliding object is the player
+        if (collision.CompareTag("Player") || collision.GetComponent<PlayerMovement>() != null)
+        {
+            isPlayerInRange = false;
+
+            // Close the console if player leaves range
+            if (isQuestionVisible)
+            {
+                isQuestionVisible = false;
+                if (questionBox != null)
+                {
+                    questionBox.SetActive(false);
+                    Debug.Log("Question box hidden as player left range.");
+                }
+
+                // Re-enable player movement
+                if (cachedPlayer != null)
+                {
+                    cachedPlayer.inputEnabled = true;
+                }
+            }
+
+            Debug.Log("Console1: Player out of range.");
+        }
+    }
+
+    void OnConsoleInteract()
+    {
         if (questionBox != null)
         {
             // visibility toggle
@@ -64,40 +106,12 @@ public class console1 : MonoBehaviour
             questionBox.SetActive(isQuestionVisible);
             Debug.Log("Question box visibility toggled: " + (isQuestionVisible ? "visible" : "hidden"));
         }
-        // enable or disable the player movement when question box is open
-        PlayerMovement player = null;
-#if UNITY_2023_2_OR_NEWER
-        player = Object.FindFirstObjectByType<PlayerMovement>();
-#else
-        player = FindObjectOfType<PlayerMovement>();
-#endif
 
-        if (player != null)
+        // enable or disable the player movement when question box is open
+        if (cachedPlayer != null)
         {
             // when question is visible = no movement
-            player.inputEnabled = !isQuestionVisible;
-        }
-        else
-        {
-            Debug.LogWarning("Console1: No PlayerMovement found in the scene to toggle input.");
-        }
-    }
-
-    void OnMouseEnter()
-    {
-        // Show hover effect
-        if (isSetup && spriteRenderer != null)
-        {
-            spriteRenderer.color = hoverColor;
-        }
-    }
-
-    void OnMouseExit()
-    {
-        // Reset color when mouse exits
-        if (isSetup && spriteRenderer != null)
-        {
-            spriteRenderer.color = originalColor;
+            cachedPlayer.inputEnabled = !isQuestionVisible;
         }
     }
 }
