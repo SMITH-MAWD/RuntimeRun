@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 23e8576b6b9d70946afae7c2c20d1c94
+guid: 7d86ed150ecf1394299b95d87b18c77c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5258865695085799708
-    second: skill3_1_0
+      213: 7816377447004277371
+    second: 3 (9)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: skill3_1_0
+      name: 3 (9)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 308
-        height: 445
+        width: 576
+        height: 297
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e65ce25381c407b0800000000000000
-      internalID: -5258865695085799708
+      spriteID: b7a801700e9597c60800000000000000
+      internalID: 7816377447004277371
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      skill3_1_0: -5258865695085799708
+      3 (9)_0: 7816377447004277371
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
