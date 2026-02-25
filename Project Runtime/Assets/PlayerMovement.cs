@@ -418,7 +418,8 @@ public class PlayerMovement : MonoBehaviour
 		//Higher gravity if we've released the jump input or are falling
 		if (IsSliding)
 		{
-			SetGravityScale(0);
+			// Never zero gravity during wall-slide; Slide() already controls vertical speed and 0-gravity can cause "floating" when holding move+jump inputs near walls.
+			SetGravityScale(Data.gravityScale);
 		}
 		else if (RB.linearVelocity.y < 0 && _moveInput.y < 0)
 		{
