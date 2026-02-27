@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,16 +6,16 @@ public class timetoanswer : MonoBehaviour
 {
     private float timerDuration = 0f;
     private bool timerActive = false;
-    private Text timerDisplayText;
+    private TextMeshProUGUI timerDisplayText;
 
     void Start()
     {
         // finding a text component
         // oh god this was easier
-        timerDisplayText = GetComponent<Text>();
+        timerDisplayText = GetComponent<TextMeshProUGUI>();
         if (timerDisplayText == null)
         {
-            Debug.LogWarning("timetoanswer: No Text component found on " + gameObject.name + ". Timer won't be displayed.");
+            Debug.LogWarning("timetoanswer: No TextMeshProUGUI component found on " + gameObject.name + ". Timer won't be displayed.");
         }
 
         UpdateDisplay();
