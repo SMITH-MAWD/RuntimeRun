@@ -7,7 +7,7 @@ public class answerfield : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "Hypertext Markup Language";
+    private const string correctAnswer = "answertest";
 
     void Start()
     {
@@ -39,7 +39,14 @@ public class answerfield : MonoBehaviour
 
     private void OnValueChanged(string text)
     {
-
+        // Start timer on first letter typed 
+        if (!timerStarted && !string.IsNullOrEmpty(text))
+        {
+            timerStarted = true;
+            timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
+            if (timer != null)
+                timer.StartTimer();
+        }
     }
 
     // when player finishes answering or closes the console
@@ -50,6 +57,14 @@ public class answerfield : MonoBehaviour
 
         if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
         {
+            // Stop timer on correct answer
+            timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
+            if (timer != null)
+                timer.StopTimer();
+            timerStarted = false;
+
+            Debug.Log("answerfield: Correct answer entered. Revealing small platforms.");
+
 
             smallplatscrpt[] platforms = Object.FindObjectsByType<smallplatscrpt>(FindObjectsSortMode.None);
             if (platforms != null && platforms.Length > 0)
@@ -68,6 +83,25 @@ public class answerfield : MonoBehaviour
             inputField.text = string.Empty;
             inputField.DeactivateInputField();
         }
+        else
+        {
+            Debug.Log("answerfield: Incorrect answer entered: '" + text + "'");
+            // increment error counter but DO NOT stop timer
+            errorscript errorTracker = Object.FindFirstObjectByType<errorscript>();
+            if (errorTracker != null)
+                errorTracker.IncrementError();
+        }
+    }
+
+    private void OnDisable()
+    {
+        // if the answer field is like turned off without any answer inputted stop the timer
+        if (timerStarted)
+        {
+            timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
+            if (timer != null)
+                timer.StopTimer();
+            timerStarted = false;
+        }
     }
 }
-

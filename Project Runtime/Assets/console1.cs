@@ -1,7 +1,4 @@
 using UnityEngine;
-
-// NOTE: In Unity, a MonoBehaviour script must have a class name that matches the file name
-// (so this component can be found/loaded when referenced from a scene).
 public class console1 : MonoBehaviour
 {
     [Tooltip("Reference to the question box GameObject")]
@@ -52,7 +49,7 @@ public class console1 : MonoBehaviour
 
     void Update()
     {
-        // Check if player is in range and presses Q
+        // Check if player is in range 
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.Q))
         {
             OnConsoleInteract();
