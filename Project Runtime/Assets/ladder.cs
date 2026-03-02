@@ -8,11 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class ladder : MonoBehaviour
 {
-    [Tooltip("Climb speed in units per second.")]
     [SerializeField] private float climbSpeed = 3f;
-
-    [Tooltip("Vertical offset to place the player above the ladder when reaching the top so they can walk off.")]
-    [SerializeField] private float topExitOffset = 0.12f;
 
     private Collider2D col;
 
@@ -22,7 +18,7 @@ public class ladder : MonoBehaviour
     private float attachedOriginalGravity = 1f;
     private bool isAttached = false;
 
-    // Potential player in trigger zone (not attached until pressing W)
+    // Potential player in trigger zone (can attach/detach with Q)
     private Rigidbody2D potentialRb;
     private PlayerMovement potentialMovement;
     private bool playerInZone = false;
@@ -81,16 +77,20 @@ public class ladder : MonoBehaviour
 
     void Update()
     {
-        // Attach only when player is inside zone and presses W
-        if (!isAttached && playerInZone && potentialRb != null)
+        if (isAttached)
         {
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                attachedRb = potentialRb;
-                attachedMovement = potentialMovement;
-                attachedOriginalGravity = attachedRb != null ? attachedRb.gravityScale : 1f;
-                Attach();
-            }
+            if (Input.GetKeyDown(KeyCode.Q))
+                Detach();
+
+            return;
+        }
+
+        if (playerInZone && potentialRb != null && Input.GetKeyDown(KeyCode.W))
+        {
+            attachedRb = potentialRb;
+            attachedMovement = potentialMovement;
+            attachedOriginalGravity = attachedRb.gravityScale;
+            Attach();
         }
     }
 
@@ -103,12 +103,13 @@ public class ladder : MonoBehaviour
 
         const float eps = 0.001f;
 
-        // If nextY would reach or pass the top, place player slightly above and detach
         if (nextY >= topY - eps)
         {
-            Vector2 exitPos = new Vector2(transform.position.x, topY + topExitOffset);
+            Vector2 exitPos = new Vector2(transform.position.x, topY);
             attachedRb.MovePosition(exitPos);
-            attachedRb.linearVelocity = Vector2.zero;
+            
+            // Preserve upward momentum when exiting the top of the ladder.
+            attachedRb.linearVelocity = new Vector2(attachedRb.linearVelocity.x, Mathf.Max(0f, v * climbSpeed));
             Detach();
             return;
         }
@@ -154,10 +155,5 @@ public class ladder : MonoBehaviour
         attachedRb = null;
         attachedMovement = null;
         isAttached = false;
-
-        // Clear potential values so attach requires re-enter and W-press
-        potentialRb = null;
-        potentialMovement = null;
-        playerInZone = false;
     }
 }
