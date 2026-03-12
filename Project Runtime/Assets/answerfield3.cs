@@ -7,7 +7,7 @@ public class answerfield3 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "answertest";
+    private const string correctAnswer = "<!DOCTYPE html>";
 
     void Start()
     {

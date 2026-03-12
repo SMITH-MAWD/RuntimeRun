@@ -7,7 +7,22 @@ public class answerfield : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "answertest";
+    private const string correctAnswer = "HYPERTEXT MARKUP LANGUAGE";
+    private const string correctAnswer2 = "Hypertext Markup Language";
+    private const string correctAnswer4 = "HyperText Markup Language";
+    private const string correctAnswer3 = "hypertext markup language";
+    // the correct answer is in all caps to avoid issues with case sensitivity, but the check will ignore case
+    // you can change this to whatever you want as long as it matches the correct answer in the check below
+
+    // if you want to add more answers you can do so by adding more constants and modifying the OnSubmit method to check for them
+    // for example, you could add a second correct answer like this:
+    // private const string correctAnswer2 = "HTML";
+    // and then in the OnSubmit method, you would check for both answers like this:
+    // if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase))
+    // {
+    //     // correct answer logic here
+    // }
+
 
     void Start()
     {
@@ -55,7 +70,7 @@ public class answerfield : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
