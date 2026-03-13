@@ -481,6 +481,24 @@ public class PlayerMovement : MonoBehaviour
 		if (CanJumpCut() || CanWallJumpCut())
 			_isJumpCut = true;
 	}
+
+	// Forces a jump immediately, bypassing grounded checks.
+	// Intended for scripted interactions (e.g. ladder-top "free jump").
+	public void ForceJump()
+	{
+		if (Data == null || RB == null)
+			return;
+
+		// Prevent "stacking" extra upward velocity which would exceed the normal max jump height.
+		if (RB.linearVelocity.y > 0f)
+			RB.linearVelocity = new Vector2(RB.linearVelocity.x, 0f);
+
+		IsJumping = true;
+		IsWallJumping = false;
+		_isJumpCut = false;
+		_isJumpFalling = false;
+		Jump();
+	}
 	#endregion
 
 	#region GENERAL METHODS

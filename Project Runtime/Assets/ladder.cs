@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Ladder trigger that lets a player attach by pressing W while inside the ladder area.
-/// While attached the player is locked to the ladder X and can move up/down with Vertical axis (W/S).
-/// Reaching the top or bottom will place the player slightly off the ladder and detach them.
-/// </summary>
+// Ladder trigger that lets a player attach 
 [RequireComponent(typeof(Collider2D))]
 public class ladder : MonoBehaviour
 {
@@ -15,6 +11,8 @@ public class ladder : MonoBehaviour
     // Player state while in/around ladder
     private Rigidbody2D attachedRb;
     private PlayerMovement attachedMovement;
+    private bool attachedMovementOriginalEnabled = true;
+    private bool attachedMovementOriginalInputEnabled = true;
     private float attachedOriginalGravity = 1f;
     private bool isAttached = false;
 
@@ -23,7 +21,6 @@ public class ladder : MonoBehaviour
     private PlayerMovement potentialMovement;
     private bool playerInZone = false;
 
-    // Ladder vertical bounds (computed from collider)
     private float topY;
     private float bottomY;
 
@@ -99,18 +96,30 @@ public class ladder : MonoBehaviour
         if (!isAttached || attachedRb == null) return;
 
         float v = Input.GetAxis("Vertical");
+
+        // Remove downward momentum unless the player is actively pressing down (S).
+        if (v >= -0.01f && attachedRb.linearVelocity.y < 0f)
+            attachedRb.linearVelocity = new Vector2(attachedRb.linearVelocity.x, 0f);
+
         float nextY = attachedRb.position.y + v * climbSpeed * Time.fixedDeltaTime;
 
         const float eps = 0.001f;
 
         if (nextY >= topY - eps)
         {
+            PlayerMovement pm = attachedMovement;
             Vector2 exitPos = new Vector2(transform.position.x, topY);
             attachedRb.MovePosition(exitPos);
-            
-            // Preserve upward momentum when exiting the top of the ladder.
-            attachedRb.linearVelocity = new Vector2(attachedRb.linearVelocity.x, Mathf.Max(0f, v * climbSpeed));
+
+            // Preserve a bit of upward momentum when stepping off the ladder.
+            if (v > 0.01f)
+                attachedRb.linearVelocity = new Vector2(attachedRb.linearVelocity.x, v * climbSpeed);
+
             Detach();
+
+            // Manual top "free jump"
+            if (pm != null && v > 0.01f && Input.GetKey(KeyCode.W))
+                pm.ForceJump();
             return;
         }
 
@@ -134,8 +143,16 @@ public class ladder : MonoBehaviour
         isAttached = true;
 
         if (attachedMovement != null)
+        {
+            attachedMovementOriginalEnabled = attachedMovement.enabled;
+            attachedMovementOriginalInputEnabled = attachedMovement.inputEnabled;
             attachedMovement.inputEnabled = false;
+            
+            // Disable PlayerMovement while on ladder so its gravity/movement logic can't pull the player off.
+            attachedMovement.enabled = false;
+        }
 
+        attachedRb.gravityScale = 0f;
         attachedRb.linearVelocity = Vector2.zero;
 
         // Snap X to ladder
@@ -150,7 +167,10 @@ public class ladder : MonoBehaviour
             attachedRb.gravityScale = attachedOriginalGravity;
 
         if (attachedMovement != null)
-            attachedMovement.inputEnabled = true;
+        {
+            attachedMovement.enabled = attachedMovementOriginalEnabled;
+            attachedMovement.inputEnabled = attachedMovementOriginalInputEnabled;
+        }
 
         attachedRb = null;
         attachedMovement = null;
