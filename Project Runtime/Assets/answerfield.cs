@@ -14,7 +14,7 @@ public class answerfield : MonoBehaviour
     // the correct answer is in all caps to avoid issues with case sensitivity, but the check will ignore case
     // you can change this to whatever you want as long as it matches the correct answer in the check below
 
-    // if you want to add more answers you can do so by adding more constants and modifying the OnSubmit method to check for them
+    //  to add more answers you can do so by adding more constants and modifying the OnSubmit method to check for them
     // for example, you could add a second correct answer like this:
     // private const string correctAnswer2 = "HTML";
     // and then in the OnSubmit method, you would check for both answers like this:

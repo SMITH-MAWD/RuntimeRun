@@ -7,7 +7,19 @@ public class answerfield14 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "answertest";
+    private const string correctAnswer = "Semantic Elements";
+    private const string correctAnswer2 = "semantic elements";
+    private const string correctAnswer3 = "Semantic elements";
+    private const string correctAnswer4 = "semantic Elements";
+    private const string correctAnswer5 = "SEMANTIC ELEMENTS";
+
+    private const string correctAnswer6 = "Semantic Element";
+    private const string correctAnswer7 = "semantic element";
+    private const string correctAnswer8 = "Semantic element";
+    private const string correctAnswer9 = "semantic Element";
+    private const string correctAnswer10 = "SEMANTIC ELEMENT";
+
+
 
     void Start()
     {
@@ -55,7 +67,7 @@ public class answerfield14 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer7, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer8, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer9, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer10, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

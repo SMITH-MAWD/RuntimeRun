@@ -7,7 +7,24 @@ public class answerfield5 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "answertest";
+    private const string correctAnswer = "HTML ELEMENTS";
+    private const string correctAnswer2 = "html elements";
+    private const string correctAnswer3 = "HTML elements";
+    private const string correctAnswer4 = "html Elements";
+    private const string correctAnswer5 = "HTML Elements";
+    private const string correctAnswer6 = "html Elements";
+    private const string correctAnswer7 = "Tags";
+    private const string correctAnswer8 = "TAGS";
+    private const string correctAnswer9 = "HTML TAGS";
+    private const string correctAnswer10 = "tags";
+    private const string correctAnswer11 = "html tags";
+    private const string correctAnswer12 = "HTML tags";
+    private const string correctAnswer13 = "html Tags";
+    private const string correctAnswer14 = "HTML Tags";
+    private const string correctAnswer15 = "ELEMENTS";
+    private const string correctAnswer16 = "elements";
+    private const string correctAnswer17 = "Elements";
+
 
     void Start()
     {
@@ -55,7 +72,26 @@ public class answerfield5 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
+        string trimmed = text.Trim();
+        bool isCorrect = trimmed.Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer7, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer8, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer9, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer10, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer11, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer12, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer13, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer14, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer15, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer16, System.StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals(correctAnswer17, System.StringComparison.OrdinalIgnoreCase);
+
+        if (isCorrect)
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
@@ -83,6 +119,8 @@ public class answerfield5 : MonoBehaviour
             inputField.text = string.Empty;
             inputField.DeactivateInputField();
         }
+
+
         else
         {
             Debug.Log("answerfield: Incorrect answer entered: '" + text + "'");
