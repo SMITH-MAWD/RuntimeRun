@@ -7,9 +7,12 @@ public class answerfield9 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "background-image";
-    private const string correctAnswer2 = "BACKGROUND-IMAGE";
-    private const string correctAnswer3 = "Background-Image";
+    private const string correctAnswer = "int";
+    private const string correctAnswer2 = "INT";
+    private const string correctAnswer3 = "Int";
+    private const string correctAnswer4 = "integer";
+    private const string correctAnswer5 = "INTEGER";
+    private const string correctAnswer6 = "Integer";
 
     void Start()
     {
@@ -57,7 +60,7 @@ public class answerfield9 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
@@ -66,7 +69,6 @@ public class answerfield9 : MonoBehaviour
             timerStarted = false;
 
             Debug.Log("answerfield: Correct answer entered. Revealing small platforms.");
-
 
             smallplatscrpt9[] platforms = Object.FindObjectsByType<smallplatscrpt9>(FindObjectsSortMode.None);
             if (platforms != null && platforms.Length > 0)

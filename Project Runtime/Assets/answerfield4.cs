@@ -7,8 +7,9 @@ public class answerfield4 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "</p>";
-    private const string correctAnswer2 = "</P>";
+    private const string correctAnswer = "CASCADING STYLE SHEETS";
+    private const string correctAnswer2 = "Cascading Style Sheets";
+    private const string correctAnswer3 = "cascading style sheets";
 
     void Start()
     {
@@ -56,7 +57,7 @@ public class answerfield4 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

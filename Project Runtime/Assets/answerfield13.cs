@@ -7,10 +7,7 @@ public class answerfield13 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "<DIV>";
-    private const string correctAnswer2 = "<div>";
-    private const string correctAnswer3 = "DIV";
-    private const string correctAnswer4 = "div";
+    private const string correctAnswer = "A";
 
 
     void Start()
@@ -59,7 +56,7 @@ public class answerfield13 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

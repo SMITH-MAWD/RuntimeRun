@@ -7,12 +7,12 @@ public class answerfield17 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "SCALABLE VECTOR GRAPHICS";
-    private const string correctAnswer2 = "scalable vector graphics";
-    private const string correctAnswer3 = "Scalable Vector Graphics";
-    private const string correctAnswer4 = "SCALABLE VECTOR GRAPHIC";
-    private const string correctAnswer5 = "scalable vector graphic";
-    private const string correctAnswer6 = "Scalable Vector Graphic";
+    private const string correctAnswer = "CONCATENATION";
+    private const string correctAnswer2 = "concatenation";
+    private const string correctAnswer3 = "Concatenation";
+    private const string correctAnswer4 = "CONCATENATIONS";
+    private const string correctAnswer5 = "concatenations";
+    private const string correctAnswer6 = "Concatenations";
     void Start()
     {
         if (inputField == null)

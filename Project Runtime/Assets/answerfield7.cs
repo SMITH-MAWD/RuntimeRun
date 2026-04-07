@@ -7,8 +7,8 @@ public class answerfield7 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "id";
-    private const string correctAnswer2 = "ID";
+    private const string correctAnswer = "False";
+    private const string correctAnswer2 = "FALSE";
 
     void Start()
     {

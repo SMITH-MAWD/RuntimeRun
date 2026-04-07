@@ -7,9 +7,9 @@ public class answerfield6 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "Attributes";
-    private const string correctAnswer2 = "attributes";
-    private const string correctAnswer3 = "ATTRIBUTES";
+    private const string correctAnswer = "Variables";
+    private const string correctAnswer2 = "variables";
+    private const string correctAnswer3 = "VARIABLES";
 
     void Start()
     {
