@@ -60594,11 +60594,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'These are examples of semantic elemets: <article>, <table>, <img>, <nav>.
-
-
-    TRUE
-    OR FALSE?'
+  m_Text: What is the method of showing or displaying text in java?
 --- !u!222 &1654336615
 CanvasRenderer:
   m_ObjectHideFlags: 0
