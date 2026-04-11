@@ -5,6 +5,10 @@ public class console1 : MonoBehaviour
     public GameObject questionBox;
     private bool isQuestionVisible = false;
 
+    // Track the most recently used console for respawn functionality
+    private static console1 mostRecentConsole;
+    public static console1 GetMostRecentConsole() => mostRecentConsole;
+
     public BoxCollider2D boxCollider;
     private PlayerMovement cachedPlayer;
     private bool isPlayerInRange = false;
@@ -96,6 +100,9 @@ public class console1 : MonoBehaviour
 
     void OnConsoleInteract()
     {
+        // Mark this console as the most recently used
+        mostRecentConsole = this;
+
         if (questionBox != null)
         {
             // visibility toggle

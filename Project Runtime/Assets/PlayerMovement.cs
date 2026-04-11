@@ -725,8 +725,43 @@ public class PlayerMovement : MonoBehaviour
 	// Called when the player should die (e.g., touched spikes)
 	public void Die()
 	{
-		// Reload the current scene to "respawn" the player
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		// Try to respawn at the most recent console
+		console1 recentConsole = console1.GetMostRecentConsole();
+		if (recentConsole != null)
+		{
+			// Respawn at the console position
+			RespawnAtPosition(recentConsole.transform.position);
+		}
+		else
+		{
+			// Fallback: Reload the scene if no console has been used
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+	}
+
+	// Respawn the player at a specific position and reset their state
+	private void RespawnAtPosition(Vector3 respawnPos)
+	{
+		// Move player to respawn position
+		transform.position = respawnPos;
+
+		// Reset physics state
+		if (RB != null)
+		{
+			RB.linearVelocity = Vector2.zero;
+			RB.angularVelocity = 0f;
+		}
+
+		// Reset jump and movement states
+		IsJumping = false;
+		IsWallJumping = false;
+		IsSliding = false;
+		_isJumpCut = false;
+		_isJumpFalling = false;
+		_moveInput = Vector2.zero;
+		inputEnabled = true;
+
+		Debug.Log("Player respawned at console position: " + respawnPos);
 	}
 
 }
