@@ -36947,6 +36947,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   sceneName: Path to Finale
+  spawnId: SpawnArea
+  usePlayerPosition: 0
 --- !u!1 &981836983
 GameObject:
   m_ObjectHideFlags: 0
@@ -40885,6 +40887,7 @@ GameObject:
   - component: {fileID: 1094989966}
   - component: {fileID: 1094989971}
   - component: {fileID: 1094989973}
+  - component: {fileID: 1094989974}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -41119,6 +41122,20 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1094989974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094989965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6f93e272ffda841b878e334bc4cdfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PersistentPlayer
+  defaultSpawnName: SpawnArea
+  virtualCameraComponent: {fileID: 519420032}
 --- !u!1 &1095658828
 GameObject:
   m_ObjectHideFlags: 0
@@ -54407,6 +54424,37 @@ Transform:
   - {fileID: 2070470068}
   - {fileID: 469809978}
   m_Father: {fileID: 420005384}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1417528025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1417528026}
+  m_Layer: 0
+  m_Name: SpawnStore
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1417528026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417528025}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -189.74234, y: -346.63998, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1419207878
 GameObject:
@@ -82355,3 +82403,4 @@ SceneRoots:
   - {fileID: 56001037}
   - {fileID: 1954302263}
   - {fileID: 977046620}
+  - {fileID: 1417528026}
