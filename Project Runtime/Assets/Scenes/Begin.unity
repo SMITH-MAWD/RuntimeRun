@@ -3785,7 +3785,7 @@ Transform:
   m_GameObject: {fileID: 107478139}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -729.53, y: -370.13, z: -18}
+  m_LocalPosition: {x: -585.39, y: -331.1, z: -18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18006,7 +18006,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -728.58, y: -369.005, z: -18}
+  m_LocalPosition: {x: -584.44, y: -329.975, z: -18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -36962,7 +36962,7 @@ Transform:
   m_GameObject: {fileID: 977046618}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -151.36, y: -345.1612, z: 0}
+  m_LocalPosition: {x: -582, y: -331, z: 0}
   m_LocalScale: {x: 2.539632, y: 2.8094866, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37027,8 +37027,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   sceneName: Path to Finale
-  spawnId: SpawnArea
-  usePlayerPosition: 0
+  useAsyncLoad: 0
+  disableTriggerAfterUse: 1
 --- !u!1 &981836983
 GameObject:
   m_ObjectHideFlags: 0
@@ -40966,7 +40966,6 @@ GameObject:
   - component: {fileID: 1094989966}
   - component: {fileID: 1094989971}
   - component: {fileID: 1094989973}
-  - component: {fileID: 1094989974}
   - component: {fileID: 1094989975}
   - component: {fileID: 1094989976}
   m_Layer: 0
@@ -41100,7 +41099,7 @@ Transform:
   m_GameObject: {fileID: 1094989965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -729.53, y: -370.13, z: -8}
+  m_LocalPosition: {x: -585.39, y: -331.1, z: -8}
   m_LocalScale: {x: 1.5, y: 1.5, z: 0.59999985}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -41157,20 +41156,6 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1094989974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1094989965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a6f93e272ffda841b878e334bc4cdfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PersistentPlayer
-  defaultSpawnName: SpawnArea
-  virtualCameraComponent: {fileID: 519420032}
 --- !u!70 &1094989975
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -54589,37 +54574,6 @@ Transform:
   - {fileID: 2070470068}
   - {fileID: 469809978}
   m_Father: {fileID: 420005384}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1417528025
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1417528026}
-  m_Layer: 0
-  m_Name: SpawnStore
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1417528026
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417528025}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -151.78, y: -346.63998, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1419207878
 GameObject:
@@ -79580,7 +79534,7 @@ Transform:
   m_GameObject: {fileID: 2067325750}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -728.58, y: -369.005, z: -18}
+  m_LocalPosition: {x: -584.44, y: -329.975, z: -18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -82706,4 +82660,3 @@ SceneRoots:
   - {fileID: 56001037}
   - {fileID: 1954302263}
   - {fileID: 977046620}
-  - {fileID: 1417528026}
