@@ -6,6 +6,8 @@ public class answerfield2 : MonoBehaviour
     [Tooltip("InputField where player types their answer. If left empty, the script will try to find an InputField on the same GameObject.")]
     public InputField inputField;
 
+    // private const Set answers = new Set("TAGS", "tags", "Elements");
+    // if (answers.Has(text.Trim().ToUppercase()))
     // answer that reveals the platform, very choosy and needs to be specific 
     private const string correctAnswer = "TAGS";
     private const string correctAnswer2 = "tags";
@@ -13,6 +15,14 @@ public class answerfield2 : MonoBehaviour
     private const string correctAnswer4 = "Elements";
     private const string correctAnswer5 = "elements";
     private const string correctAnswer6 = "ELEMENTS";
+
+    private const string correctAnswer7 = "tag";
+    private const string correctAnswer8 = "Tag";
+    private const string correctAnswer9 = "TAG";
+
+    private const string correctAnswer10 = "element";
+    private const string correctAnswer11 = "Element";
+    private const string correctAnswer12 = "ELEMENT";
 
     void Start()
     {
@@ -60,7 +70,7 @@ public class answerfield2 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer7, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer8, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer9, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer10, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer11, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer12, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
