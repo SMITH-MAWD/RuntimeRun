@@ -3785,7 +3785,11 @@ Transform:
   m_GameObject: {fileID: 107478139}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: -194.7, y: -344.5, z: -18}
+=======
+  m_LocalPosition: {x: -197.26, y: -345.87, z: -18}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18004,7 +18008,11 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: -193.75, y: -343.375, z: -18}
+=======
+  m_LocalPosition: {x: -196.31, y: -344.745, z: -18}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -36882,7 +36890,11 @@ Transform:
   m_GameObject: {fileID: 977046618}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: -186.3979, y: -345.1612, z: 0}
+=======
+  m_LocalPosition: {x: -177, y: -345.5, z: 0}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 2.539632, y: 2.8094866, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40887,7 +40899,6 @@ GameObject:
   - component: {fileID: 1094989966}
   - component: {fileID: 1094989971}
   - component: {fileID: 1094989973}
-  - component: {fileID: 1094989974}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -41065,7 +41076,11 @@ Transform:
   m_GameObject: {fileID: 1094989965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: -194.7, y: -344.5, z: -8}
+=======
+  m_LocalPosition: {x: -197.26, y: -345.87, z: -8}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 3.2, y: 3.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41122,20 +41137,6 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1094989974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1094989965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a6f93e272ffda841b878e334bc4cdfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PersistentPlayer
-  defaultSpawnName: SpawnArea
-  virtualCameraComponent: {fileID: 519420032}
 --- !u!1 &1095658828
 GameObject:
   m_ObjectHideFlags: 0
@@ -79277,7 +79278,11 @@ Transform:
   m_GameObject: {fileID: 2067325750}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: -193.75, y: -343.375, z: -18}
+=======
+  m_LocalPosition: {x: -196.31, y: -344.745, z: -18}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
