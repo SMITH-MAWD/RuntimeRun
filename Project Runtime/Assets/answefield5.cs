@@ -8,8 +8,6 @@ public class answerfield5 : MonoBehaviour
 
     // answer that reveals the platform, very choosy and needs to be specific 
     private const string correctAnswer = "TRUE";
-    private const string correctAnswer2 = "true";
-    private const string correctAnswer3 = "True";
 
 
     void Start()
@@ -59,9 +57,7 @@ public class answerfield5 : MonoBehaviour
             return;
 
         string trimmed = text.Trim();
-        bool isCorrect = trimmed.Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase)
-            || trimmed.Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase)
-            || trimmed.Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase);
+        bool isCorrect = trimmed.Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase);
 
         if (isCorrect)
         {

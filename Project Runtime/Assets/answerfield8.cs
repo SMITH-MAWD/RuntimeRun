@@ -7,14 +7,9 @@ public class answerfield8 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "if";
-    private const string correctAnswer2 = "IF";
-    private const string correctAnswer3 = "if statement";
-    private const string correctAnswer4 = "IF STATEMENT";
-    private const string correctAnswer5 = "If";
-    private const string correctAnswer6 = "If statement";
-    private const string correctAnswer7 = "If Statement";
-    private const string correctAnswer8 = "if Statement";
+
+    private const string correctAnswer = "IF";
+    private const string correctAnswer2 = "IF STATEMENT";
 
     void Start()
     {
@@ -62,7 +57,7 @@ public class answerfield8 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer7, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer8, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

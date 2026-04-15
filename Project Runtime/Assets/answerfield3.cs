@@ -8,11 +8,7 @@ public class answerfield3 : MonoBehaviour
 
     // answer that reveals the platform, very choosy and needs to be specific 
     private const string correctAnswer = "ATTRIBUTES";
-    private const string correctAnswer2 = "attributes";
-    private const string correctAnswer3 = "Attributes";
-    private const string correctAnswer4 = "ATTRIBUTE";
-    private const string correctAnswer5 = "Attribute";
-    private const string correctAnswer6 = "attribute";
+    private const string correctAnswer2 = "ATTRIBUTE";
     void Start()
     {
         if (inputField == null)
@@ -59,7 +55,7 @@ public class answerfield3 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || (text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase)) || (text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase)) || (text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase)) || (text.Trim().Equals(correctAnswer5, System.StringComparison.OrdinalIgnoreCase)) || (text.Trim().Equals(correctAnswer6, System.StringComparison.OrdinalIgnoreCase)))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || (text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase)))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

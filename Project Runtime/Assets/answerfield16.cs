@@ -7,7 +7,7 @@ public class answerfield16 : MonoBehaviour
     public InputField inputField;
 
     // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "System.out.print();";
+    private const string correctAnswer = "SYSTEM.OUT.PRINT();";
 
     void Start()
     {
