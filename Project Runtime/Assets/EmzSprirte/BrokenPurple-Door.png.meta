@@ -104,16 +104,27 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 37
-        y: 23
-        width: 122
-        height: 97
+        y: 25
+        width: 121
+        height: 107
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: -53.5, y: -51.5}
+        - {x: 54.5, y: -52.5}
+        - {x: 55.5, y: -4.5}
+        - {x: 45.5, y: -5.5}
+        - {x: 37.5, y: -3.5}
+        - {x: 26.5, y: 8.5}
+        - {x: 15.5, y: 15.5}
+        - {x: 0.5, y: 21.5}
+        - {x: -25.5, y: 28.5}
+        - {x: -43.5, y: 37.5}
+        - {x: -52.5, y: 38.5}
+      tessellationDetail: 0
       bones: []
       spriteID: b747408436cce73e0800000000000000
       internalID: -2053979653252287365
@@ -125,7 +136,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 92ba96e8e73066c479d8c7549b65c67e
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +147,8 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       BrokenPurple-Door_0: -2053979653252287365
+      BrokenPurple-Door_1: -2072438007
+      BrokenPurple-Door_2: 1195243207
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
