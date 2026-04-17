@@ -68,10 +68,4 @@ public class smallplatscrpt : MonoBehaviour
             Debug.LogWarning("smallplatscrpt.Reveal: No Collider2D found on " + gameObject.name + ". Cannot enable colliders.");
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

@@ -9,6 +9,7 @@ public class answerfield2 : MonoBehaviour
     // private const Set answers = new Set("TAGS", "tags", "Elements");
     // if (answers.Has(text.Trim().ToUppercase()))
     // answer that reveals the platform, very choosy and needs to be specific 
+    
     private const string correctAnswer = "TAGS";
     private const string correctAnswer2 = "ELEMENTS";
     private const string correctAnswer3 = "TAG";
