@@ -2,69 +2,62 @@ using UnityEngine;
 
 public class followeye : MonoBehaviour
 {
-    [Tooltip("Assign the player's Transform. If left empty the script will try to find the GameObject with tag 'Player'.")]
-    public Transform player;
+    [Tooltip("Transform to follow (preferred). If null the script will try to find the GameObject with tag 'Player'.")]
+    public Transform target;
 
-    [Header("Trigger area (optional)")]
-    [Tooltip("If assigned, the eye will only follow when the player is inside this Collider2D's bounds.")]
-    public Collider2D triggerArea;
+    [Tooltip("Follow speed in world units per second. Set large for near-instant movement.")]
+    public float followSpeed = 10f;
 
-    [Header("Follow bounds (world coordinates)")]
-    public float minX = 48f;
-    public float maxX = 69f;
-    public float minY = 27f;
-    public float maxY = 28f;
+    [Tooltip("Fixed Z position to keep (useful for 2D).")]
+    public float fixedZ = -10f;
 
-    [Header("Motion")]
-    [Tooltip("How fast the eye moves to the target position. Use a large value for near-instant movement.")]
-    public float followSpeed = 20f;
+    [Header("Lock Y")]
+    [Tooltip("When true the eye's Y will be fixed to fixedY (eye only moves left/right).")]
+    public bool lockY = true;
+    [Tooltip("Fixed world Y position for the eye when lockY is enabled. If left NaN the current transform.y is used.")]
+    public float fixedY = float.NaN;
 
-    // internal flag to avoid repeated calls to FindWithTag
-    private bool triedFindPlayer = false;
+    [Header("Optional X clamp")]
+    [Tooltip("Clamp X between minX and maxX")]
+    public bool useXClamp = false;
+    public float minX = -Mathf.Infinity;
+    public float maxX = Mathf.Infinity;
 
     void Start()
     {
-        if (player == null)
-        {
+        if (target == null)
             TryFindPlayer();
-        }
+
+        if (lockY && float.IsNaN(fixedY))
+            fixedY = transform.position.y;
     }
 
     void Update()
     {
-        if (player == null)
+        if (target == null)
         {
-            if (!triedFindPlayer) TryFindPlayer();
-            return;
+            TryFindPlayer();
+            if (target == null) return;
         }
 
-        // Only follow when player is inside the trigger area if one is set.
-        bool insideArea = true;
-        if (triggerArea != null)
-        {
-            insideArea = triggerArea.OverlapPoint(player.position);
-        }
+        float desiredX = target.position.x;
+        if (useXClamp)
+            desiredX = Mathf.Clamp(desiredX, minX, maxX);
 
-        if (!insideArea)
-            return;
+        float desiredY = lockY ? fixedY : target.position.y;
+        Vector3 current = transform.position;
+        Vector3 desired = new Vector3(desiredX, desiredY, fixedZ);
 
-        // Compute the desired (clamped) position based on player's position
-        float targetX = Mathf.Clamp(player.position.x, minX, maxX);
-        float targetY = Mathf.Clamp(player.position.y, minY, maxY);
-        Vector3 targetPos = new Vector3(targetX, targetY, transform.position.z);
-
-        // Smoothly move the eye towards the target position. For instant movement set followSpeed to a very large value.
         if (followSpeed <= 0f)
-            transform.position = targetPos;
+            transform.position = desired;
         else
-            transform.position = Vector3.Lerp(transform.position, targetPos, Mathf.Clamp01(followSpeed * Time.deltaTime));
+            transform.position = Vector3.MoveTowards(current, desired, followSpeed * Time.deltaTime);
     }
 
     private void TryFindPlayer()
     {
-        triedFindPlayer = true;
-        GameObject p = GameObject.FindWithTag("Player");
-        if (p != null)
-            player = p.transform;
+        var go = GameObject.FindWithTag("Player");
+        if (go != null)
+            target = go.transform;
     }
 }
