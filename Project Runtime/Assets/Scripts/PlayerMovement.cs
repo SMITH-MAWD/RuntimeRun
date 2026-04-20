@@ -20,7 +20,6 @@ public class PlayerMovement : MonoBehaviour
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
-	public bool IsSliding { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
@@ -55,12 +54,6 @@ public class PlayerMovement : MonoBehaviour
 	[Tooltip("Inwards inset from the collider edges for left/right rays.")]
 	[SerializeField, Min(0f)] private float _groundRayInset = 0.05f;
 	[SerializeField] private bool _drawGroundRays = true;
-
-	[Header("Collider Checks")]
-	[Tooltip("Optional. If assigned, grounded/wall checks use these trigger colliders instead of OverlapBox.")]
-	[SerializeField] private Collider2D _groundCheckCollider;
-	[SerializeField] private Collider2D _frontWallCheckCollider;
-	[SerializeField] private Collider2D _backWallCheckCollider;
 
 	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
@@ -107,19 +100,6 @@ public class PlayerMovement : MonoBehaviour
 			ground.transform.SetParent(transform, worldPositionStays: false);
 			ground.transform.localPosition = new Vector3(0f, -halfHeight, 0f);
 			_groundCheckPoint = ground.transform;
-
-			// Create a trigger collider for collider-based ground checks
-			if (_groundCheckCollider == null)
-			{
-				BoxCollider2D bc = ground.AddComponent<BoxCollider2D>();
-				bc.isTrigger = true;
-				bc.size = _groundCheckSize;
-				_groundCheckCollider = bc;
-			}
-		}
-		else if (_groundCheckCollider == null)
-		{
-			_groundCheckCollider = _groundCheckPoint.GetComponent<Collider2D>();
 		}
 
 		// Front Wall Check: on the right when facing right (positive X)
@@ -129,18 +109,6 @@ public class PlayerMovement : MonoBehaviour
 			frontWall.transform.SetParent(transform, worldPositionStays: false);
 			frontWall.transform.localPosition = new Vector3(halfWidth, 0f, 0f);
 			_frontWallCheckPoint = frontWall.transform;
-
-			if (_frontWallCheckCollider == null)
-			{
-				BoxCollider2D bc = frontWall.AddComponent<BoxCollider2D>();
-				bc.isTrigger = true;
-				bc.size = _wallCheckSize;
-				_frontWallCheckCollider = bc;
-			}
-		}
-		else if (_frontWallCheckCollider == null)
-		{
-			_frontWallCheckCollider = _frontWallCheckPoint.GetComponent<Collider2D>();
 		}
 
 		// Back Wall Check: on the left when facing right (negative X)
@@ -150,43 +118,7 @@ public class PlayerMovement : MonoBehaviour
 			backWall.transform.SetParent(transform, worldPositionStays: false);
 			backWall.transform.localPosition = new Vector3(-halfWidth, 0f, 0f);
 			_backWallCheckPoint = backWall.transform;
-
-			if (_backWallCheckCollider == null)
-			{
-				BoxCollider2D bc = backWall.AddComponent<BoxCollider2D>();
-				bc.isTrigger = true;
-				bc.size = _wallCheckSize;
-				_backWallCheckCollider = bc;
-			}
 		}
-		else if (_backWallCheckCollider == null)
-		{
-			_backWallCheckCollider = _backWallCheckPoint.GetComponent<Collider2D>();
-		}
-	}
-
-	private bool AnyGroundOverlap(Collider2D checkCollider)
-	{
-		if (checkCollider == null)
-			return false;
-
-		// We generally want to detect solid ground/walls (non-triggers). Our check colliders are triggers, but Overlap() can still report non-trigger colliders overlapping them.
-		ContactFilter2D filter = new ContactFilter2D
-		{
-			useTriggers = false
-		};
-		filter.SetLayerMask(_groundLayer);
-		filter.useLayerMask = true;
-
-		int hitCount = checkCollider.Overlap(filter, _overlapResults);
-		for (int i = 0; i < hitCount; i++)
-		{
-			Collider2D hit = _overlapResults[i];
-			if (IsSelfCollider(hit))
-				continue;
-			return true;
-		}
-		return false;
 	}
 
 	private bool AnyGroundOverlapBox(Transform checkPoint, Vector2 checkSize)
@@ -332,7 +264,7 @@ public class PlayerMovement : MonoBehaviour
 			//Ground Check
 			bool grounded = _useRaycastGroundCheck
 				? IsGroundedRaycast()
-				: (AnyGroundOverlap(_groundCheckCollider) || AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize));
+				: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
 
 			if (grounded && !IsJumping) //checks if set box overlaps with ground
 			{
@@ -342,8 +274,8 @@ public class PlayerMovement : MonoBehaviour
 			//Right Wall Check
 			bool rightWall =
 				(IsFacingRight
-					? (AnyGroundOverlap(_frontWallCheckCollider) || AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize))
-					: (AnyGroundOverlap(_backWallCheckCollider) || AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize)));
+					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
+					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (rightWall && !IsWallJumping)
 				LastOnWallRightTime = Data.coyoteTime;
@@ -351,8 +283,8 @@ public class PlayerMovement : MonoBehaviour
 			//Right Wall Check
 			bool leftWall =
 				(!IsFacingRight
-					? (AnyGroundOverlap(_frontWallCheckCollider) || AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize))
-					: (AnyGroundOverlap(_backWallCheckCollider) || AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize)));
+					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
+					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (leftWall && !IsWallJumping)
 				LastOnWallLeftTime = Data.coyoteTime;
@@ -407,21 +339,9 @@ public class PlayerMovement : MonoBehaviour
 		}
 		#endregion
 
-		#region SLIDE CHECKS
-		if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
-			IsSliding = true;
-		else
-			IsSliding = false;
-		#endregion
-
 		#region GRAVITY
 		//Higher gravity if we've released the jump input or are falling
-		if (IsSliding)
-		{
-			// Never zero gravity during wall-slide; Slide() already controls vertical speed and 0-gravity can cause "floating" when holding move+jump inputs near walls.
-			SetGravityScale(Data.gravityScale);
-		}
-		else if (RB.linearVelocity.y < 0 && _moveInput.y < 0)
+		if (RB.linearVelocity.y < 0 && _moveInput.y < 0)
 		{
 			//Much higher gravity if holding down
 			SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
@@ -463,10 +383,6 @@ public class PlayerMovement : MonoBehaviour
 			Run(Data.wallJumpRunLerp);
 		else
 			Run(1);
-
-		//Handle Slide
-		if (IsSliding)
-			Slide();
 	}
 
 	#region INPUT CALLBACKS
@@ -626,22 +542,6 @@ public class PlayerMovement : MonoBehaviour
 	}
 	#endregion
 
-	#region OTHER MOVEMENT METHODS
-	private void Slide()
-	{
-		//Works the same as the Run but only in the y-axis
-		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
-		float speedDif = Data.slideSpeed - RB.linearVelocity.y;
-		float movement = speedDif * Data.slideAccel;
-		//So, we clamp the movement here to prevent any over corrections (these aren't noticeable in the Run)
-		//The force applied can't be greater than the (negative) speedDifference * by how many times a second FixedUpdate() is called. For more info research how force are applied to rigidbodies.
-		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
-
-		RB.AddForce(movement * Vector2.up);
-	}
-	#endregion
-
-
 	#region CHECK METHODS
 	public void CheckDirectionToFace(bool isMovingRight)
 	{
@@ -668,14 +568,6 @@ public class PlayerMovement : MonoBehaviour
 	private bool CanWallJumpCut()
 	{
 		return IsWallJumping && RB.linearVelocity.y > 0;
-	}
-
-	public bool CanSlide()
-	{
-		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0)
-			return true;
-		else
-			return false;
 	}
 	#endregion
 
@@ -704,20 +596,14 @@ public class PlayerMovement : MonoBehaviour
 				Gizmos.DrawLine(right, right + Vector3.down * _groundRayLength);
 			}
 		}
-		else if (_groundCheckCollider != null)
-			Gizmos.DrawWireCube(_groundCheckCollider.bounds.center, _groundCheckCollider.bounds.size);
 		else if (_groundCheckPoint != null)
 			Gizmos.DrawWireCube(_groundCheckPoint.position, _groundCheckSize);
 
 		Gizmos.color = Color.blue;
-		if (_frontWallCheckCollider != null)
-			Gizmos.DrawWireCube(_frontWallCheckCollider.bounds.center, _frontWallCheckCollider.bounds.size);
-		else if (_frontWallCheckPoint != null)
+		if (_frontWallCheckPoint != null)
 			Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
 
-		if (_backWallCheckCollider != null)
-			Gizmos.DrawWireCube(_backWallCheckCollider.bounds.center, _backWallCheckCollider.bounds.size);
-		else if (_backWallCheckPoint != null)
+		if (_backWallCheckPoint != null)
 			Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
 	}
 	#endregion
@@ -755,7 +641,6 @@ public class PlayerMovement : MonoBehaviour
 		// Reset jump and movement states
 		IsJumping = false;
 		IsWallJumping = false;
-		IsSliding = false;
 		_isJumpCut = false;
 		_isJumpFalling = false;
 		_moveInput = Vector2.zero;
@@ -765,5 +650,3 @@ public class PlayerMovement : MonoBehaviour
 	}
 
 }
-
-// created by Dawnosaur :D
