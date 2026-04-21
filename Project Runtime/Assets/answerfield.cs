@@ -8,9 +8,7 @@ public class answerfield : MonoBehaviour
 
     // answer that reveals the platform, very choosy and needs to be specific 
     private const string correctAnswer = "HYPERTEXT MARKUP LANGUAGE";
-    private const string correctAnswer2 = "Hypertext Markup Language";
-    private const string correctAnswer4 = "HyperText Markup Language";
-    private const string correctAnswer3 = "hypertext markup language";
+
     // the correct answer is in all caps to avoid issues with case sensitivity, but the check will ignore case
     // you can change this to whatever you want as long as it matches the correct answer in the check below
 
@@ -70,7 +68,7 @@ public class answerfield : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer3, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer4, System.StringComparison.OrdinalIgnoreCase))
+        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
