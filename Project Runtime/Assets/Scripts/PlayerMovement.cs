@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
 
-	public PlayerData Data;
+	public PlayerData Data;	
+    Animator animator;
 
 	// When false, movement and jump input are ignored (e.g. when a console/question UI is open).
 	public bool inputEnabled = true;
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
+	public bool IsGrounded { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
@@ -73,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		RB = GetComponent<Rigidbody2D>();
 		_mainCollider = GetComponent<Collider2D>();
+		if (animator == null) animator = GetComponentInChildren<Animator>();
 		CreateCheckPointsIfMissing();
 	}
 
@@ -370,9 +373,11 @@ public class PlayerMovement : MonoBehaviour
 			//Default gravity if standing on a platform or moving upwards
 			SetGravityScale(Data.gravityScale);
 		}
-		#endregion
+		animator.SetFloat("xVelocity", Mathf.Abs(RB.linearVelocity.x));
+		animator.SetFloat("yVelocity", RB.linearVelocity.y);
+		animator.SetBool("isJumping", IsJumping);
 	}
-
+#endregion
 	private void FixedUpdate()
 	{
 		if (Data == null)
