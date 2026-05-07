@@ -10,18 +10,33 @@ public class PlayerMovement : MonoBehaviour
 
 	// When false, movement and jump input are ignored (e.g. when a console/question UI is open).
 	public bool inputEnabled = true;
+	private bool _isMoving = false;
+	private bool _isGrounded = false;
 
 	#region Variables
 	//Components
 	public Rigidbody2D RB { get; private set; }
 
 	//Variables control the various actions the player can perform at any time.
-	//These are fields which can are public allowing for other sctipts to read them
-	//but can only be privately written to.
+	public bool IsMoving { 
+		get { 
+		return _isMoving; 
+		} private set {
+			_isMoving = value;
+			animator.SetBool("isMoving", value);
+		} 
+	}
+	public bool IsGrounded { 
+		get {
+			return _isGrounded;
+		} private set {
+			_isGrounded = value;
+			animator.SetBool("isGrounded", value);
+		}
+	}
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
-	public bool IsGrounded { get; private set; }
 	public bool IsSliding { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
@@ -78,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
 	private readonly Collider2D[] _overlapResults = new Collider2D[8];
 	private readonly RaycastHit2D[] _raycastResults = new RaycastHit2D[8];
 
-	private Collider2D _mainCollider;
+	private CapsuleCollider2D _mainCollider;
 
 	// If the ground layer isn't configured, we fall back to "ground-like" accel so movement still works.
 	// (Otherwise, the controller can become permanently "airborne", and accelInAir = 0 results in no movement.)
@@ -88,8 +103,8 @@ public class PlayerMovement : MonoBehaviour
 	private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
-		_mainCollider = GetComponent<Collider2D>();
-		if (animator == null) animator = GetComponentInChildren<Animator>();
+		_mainCollider = GetComponent<CapsuleCollider2D>();
+		animator = GetComponentInChildren<Animator>();
 		CreateCheckPointsIfMissing();
 	}
 
@@ -178,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool IsGroundedRaycast()
 	{
 		if (_mainCollider == null)
-			_mainCollider = GetComponent<Collider2D>();
+			_mainCollider = GetComponent<CapsuleCollider2D>();
 		if (_mainCollider == null)
 			return false;
 
@@ -221,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool IsTouchingWallRaycast(int dir)
 	{
 		if (_mainCollider == null)
-			_mainCollider = GetComponent<Collider2D>();
+			_mainCollider = GetComponent<CapsuleCollider2D>();
 		if (_mainCollider == null)
 			return false;
 
@@ -316,14 +331,18 @@ public class PlayerMovement : MonoBehaviour
 		_isTouchingWallRight = false;
 		_isTouchingWallLeft = false;
 
+		// Live ground check runs EVERY frame (even mid-jump) so the IsGrounded property
+		// setter fires and the Animator's "isGrounded" parameter reflects real physical
+		// contact. The LastOnGroundTime coyote-time refresh below is still gated by
+		// !IsJumping to preserve existing jump mechanics.
+		bool grounded = _useRaycastGroundCheck
+			? IsGroundedRaycast()
+			: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
+		IsGrounded = grounded;
+
 		if (!IsJumping)
 		{
-			//Ground Check
-			bool grounded = _useRaycastGroundCheck
-				? IsGroundedRaycast()
-				: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
-
-			if (grounded && !IsJumping) //checks if set box overlaps with ground
+			if (grounded) //checks if set box overlaps with ground
 			{
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
 			}
@@ -447,9 +466,8 @@ public class PlayerMovement : MonoBehaviour
 			//Default gravity if standing on a platform or moving upwards
 			SetGravityScale(Data.gravityScale);
 		}
-		animator.SetFloat("xVelocity", Mathf.Abs(RB.linearVelocity.x));
+		IsMoving = Mathf.Abs(RB.linearVelocity.x) > 0.1f;	
 		animator.SetFloat("yVelocity", RB.linearVelocity.y);
-		animator.SetBool("isJumping", IsJumping);
 	}
 #endregion
 	private void FixedUpdate()
@@ -607,6 +625,8 @@ public class PlayerMovement : MonoBehaviour
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 		#endregion
+
+		animator.SetTrigger("jump");
 	}
 
 	private void WallJump(int dir)
