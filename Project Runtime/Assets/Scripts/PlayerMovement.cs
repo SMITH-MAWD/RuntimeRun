@@ -51,6 +51,10 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private Transform _groundCheckPoint;
 	//Size of groundCheck depends on the size of your character generally you want them slightly small than width (for ground) and height (for the wall check)
 	[SerializeField] private Vector2 _groundCheckSize = new Vector2(0.49f, 0.03f);
+	[Space(5)]
+	[SerializeField] private Transform _frontWallCheckPoint;
+	[SerializeField] private Transform _backWallCheckPoint;
+	[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
 
 	[Header("Grounded Raycast")]
 	[SerializeField] private bool _useRaycastGroundCheck = true;
@@ -60,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private bool _drawGroundRays = true;
 
 	[Header("Wall Raycast")]
+	// Use horizontal raycasts for wall detection so the wall check can never spuriously hit the floor.
+	[SerializeField] private bool _useRaycastWallCheck = true;
 	[SerializeField, Min(0.01f)] private float _wallRayLength = 0.1f;
 	[Tooltip("Vertical inset from the top/bottom of the collider for the wall rays (avoids scraping floor/ceiling).")]
 	[SerializeField, Min(0f)] private float _wallRayVerticalInset = 0.08f;
@@ -88,20 +94,48 @@ public class PlayerMovement : MonoBehaviour
 	}
 
 
+	// Creates Ground Check and two Wall Check child GameObjects at the player's feet and sides
+	// when their references are not set in the Inspector. Uses Collider2D bounds for positioning if present.
+
 	private void CreateCheckPointsIfMissing()
 	{
-		if (_groundCheckPoint != null)
-			return;
-
+		// Use collider bounds for positioning if available; otherwise use default half-extents
+		float halfWidth = 0.5f;
 		float halfHeight = 0.5f;
 		Collider2D col = GetComponent<Collider2D>();
 		if (col != null)
-			halfHeight = col.bounds.extents.y;
+		{
+			Bounds b = col.bounds;
+			halfWidth = b.extents.x;
+			halfHeight = b.extents.y;
+		}
 
-		GameObject ground = new GameObject("GroundCheck");
-		ground.transform.SetParent(transform, worldPositionStays: false);
-		ground.transform.localPosition = new Vector3(0f, -halfHeight, 0f);
-		_groundCheckPoint = ground.transform;
+		// Ground Check: child at player's feet (center-bottom)
+		if (_groundCheckPoint == null)
+		{
+			GameObject ground = new GameObject("GroundCheck");
+			ground.transform.SetParent(transform, worldPositionStays: false);
+			ground.transform.localPosition = new Vector3(0f, -halfHeight, 0f);
+			_groundCheckPoint = ground.transform;
+		}
+
+		// Front Wall Check: on the right when facing right (positive X)
+		if (_frontWallCheckPoint == null)
+		{
+			GameObject frontWall = new GameObject("FrontWallCheck");
+			frontWall.transform.SetParent(transform, worldPositionStays: false);
+			frontWall.transform.localPosition = new Vector3(halfWidth, 0f, 0f);
+			_frontWallCheckPoint = frontWall.transform;
+		}
+
+		// Back Wall Check: on the left when facing right (negative X)
+		if (_backWallCheckPoint == null)
+		{
+			GameObject backWall = new GameObject("BackWallCheck");
+			backWall.transform.SetParent(transform, worldPositionStays: false);
+			backWall.transform.localPosition = new Vector3(-halfWidth, 0f, 0f);
+			_backWallCheckPoint = backWall.transform;
+		}
 	}
 
 	private bool AnyGroundOverlapBox(Transform checkPoint, Vector2 checkSize)
@@ -236,8 +270,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Update()
 	{
-		// Ensure ground check point exists (e.g. if created at runtime or reference was cleared)
-		if (_groundCheckPoint == null)
+		// Ensure check points exist (e.g. if created at runtime or references were cleared)
+		if (_groundCheckPoint == null || _frontWallCheckPoint == null || _backWallCheckPoint == null)
 			CreateCheckPointsIfMissing();
 		if (Data == null)
 			return;
@@ -295,13 +329,21 @@ public class PlayerMovement : MonoBehaviour
 			}
 
 			//Right Wall Check
-			bool rightWall = IsTouchingWallRaycast(+1);
+			bool rightWall = _useRaycastWallCheck
+				? IsTouchingWallRaycast(+1)
+				: (IsFacingRight
+					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
+					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (rightWall && !IsWallJumping)
 				LastOnWallRightTime = Data.coyoteTime;
 
 			//Left Wall Check
-			bool leftWall = IsTouchingWallRaycast(-1);
+			bool leftWall = _useRaycastWallCheck
+				? IsTouchingWallRaycast(-1)
+				: (!IsFacingRight
+					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
+					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (leftWall && !IsWallJumping)
 				LastOnWallLeftTime = Data.coyoteTime;
@@ -659,7 +701,7 @@ public class PlayerMovement : MonoBehaviour
 			Gizmos.DrawWireCube(_groundCheckPoint.position, _groundCheckSize);
 
 		Gizmos.color = Color.blue;
-		if (_drawWallRays)
+		if (_drawWallRays && _useRaycastWallCheck)
 		{
 			Collider2D col = _mainCollider != null ? _mainCollider : GetComponent<Collider2D>();
 			if (col != null)
@@ -682,6 +724,13 @@ public class PlayerMovement : MonoBehaviour
 					Gizmos.DrawLine(bot, bot + step);
 				}
 			}
+		}
+		else
+		{
+			if (_frontWallCheckPoint != null)
+				Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
+			if (_backWallCheckPoint != null)
+				Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
 		}
 	}
 	#endregion
