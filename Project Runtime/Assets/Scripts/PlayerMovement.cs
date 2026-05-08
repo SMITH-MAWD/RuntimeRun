@@ -34,6 +34,18 @@ public class PlayerMovement : MonoBehaviour
 			animator.SetBool("isGrounded", value);
 		}
 	}
+	public bool canMove {
+		get {
+			if (animator == null)
+				return true;
+			return animator.GetBool("canMove");
+		}
+		private set {
+			if (animator == null)
+				return;
+			animator.SetBool("canMove", value);
+		}
+	}
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
@@ -301,7 +313,7 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region INPUT HANDLER
-		if (inputEnabled)
+		if (inputEnabled && canMove)
 		{
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
@@ -319,6 +331,12 @@ public class PlayerMovement : MonoBehaviour
 			{
 				OnJumpUpInput();
 			}
+
+			// Attack input (J). Routed through onAttackInput() to mirror the OnJumpInput() pattern.
+			if (Input.GetKeyDown(KeyCode.J))
+			{
+				onAttackInput();
+			}
 		}
 		else
 		{
@@ -331,10 +349,7 @@ public class PlayerMovement : MonoBehaviour
 		_isTouchingWallRight = false;
 		_isTouchingWallLeft = false;
 
-		// Live ground check runs EVERY frame (even mid-jump) so the IsGrounded property
-		// setter fires and the Animator's "isGrounded" parameter reflects real physical
-		// contact. The LastOnGroundTime coyote-time refresh below is still gated by
-		// !IsJumping to preserve existing jump mechanics.
+
 		bool grounded = _useRaycastGroundCheck
 			? IsGroundedRaycast()
 			: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
@@ -495,8 +510,6 @@ public class PlayerMovement : MonoBehaviour
 			_isJumpCut = true;
 	}
 
-	// Forces a jump immediately, bypassing grounded checks.
-	// Intended for scripted interactions (e.g. ladder-top "free jump").
 	public void ForceJump()
 	{
 		if (Data == null || RB == null)
@@ -512,6 +525,12 @@ public class PlayerMovement : MonoBehaviour
 		_isJumpFalling = false;
 		Jump();
 	}
+
+	public void onAttackInput()
+	{
+		animator.SetTrigger("attackTrigger");
+	}
+
 	#endregion
 
 	#region GENERAL METHODS
@@ -626,7 +645,7 @@ public class PlayerMovement : MonoBehaviour
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 		#endregion
 
-		animator.SetTrigger("jump");
+		animator.SetTrigger("jumpTrigger");
 	}
 
 	private void WallJump(int dir)
