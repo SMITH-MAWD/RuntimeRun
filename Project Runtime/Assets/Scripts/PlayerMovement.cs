@@ -110,6 +110,12 @@ public class PlayerMovement : MonoBehaviour
 	// If the ground layer isn't configured, we fall back to "ground-like" accel so movement still works.
 	// (Otherwise, the controller can become permanently "airborne", and accelInAir = 0 results in no movement.)
 	private bool _warnedMissingGroundLayer;
+
+	[Header("Attack")]
+	[SerializeField, Min(0.05f)] private float _attackLockDuration	 = 0.5f;
+	private float _attackLockEndTime;
+	public bool IsAttacking => Time.time < _attackLockEndTime;
+	
 	#endregion
 
 	private void Awake()
@@ -313,7 +319,12 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region INPUT HANDLER
-		if (inputEnabled && canMove)
+		if (inputEnabled && Input.GetKeyDown(KeyCode.J))
+		{
+			onAttackInput();
+		}
+
+		if (inputEnabled && canMove && !IsAttacking)
 		{
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
@@ -330,12 +341,6 @@ public class PlayerMovement : MonoBehaviour
 			if (Input.GetKeyUp(KeyCode.W))
 			{
 				OnJumpUpInput();
-			}
-
-			// Attack input (J). Routed through onAttackInput() to mirror the OnJumpInput() pattern.
-			if (Input.GetKeyDown(KeyCode.J))
-			{
-				onAttackInput();
 			}
 		}
 		else
@@ -529,6 +534,9 @@ public class PlayerMovement : MonoBehaviour
 	public void onAttackInput()
 	{
 		animator.SetTrigger("attackTrigger");
+		// Stamp/extend the movement lock window. Each press resets the timer, so the
+		// player stays locked through chained hits without measuring animation length.
+		_attackLockEndTime = Time.time + _attackLockDuration;
 	}
 
 	#endregion
