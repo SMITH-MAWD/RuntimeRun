@@ -319,7 +319,7 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region INPUT HANDLER
-		if (inputEnabled && Input.GetKeyDown(KeyCode.J))
+		if (inputEnabled && Input.GetKeyDown(KeyCode.J) && IsGrounded)
 		{
 			onAttackInput();
 		}
