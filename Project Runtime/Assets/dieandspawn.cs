@@ -33,7 +33,7 @@ public class dieandspawn : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.GetComponentInParent<DeathSpike>() != null) { collision.collider.gameObject.SetActive(false); }
+        if (collision.collider.GetComponentInParent<DeathSpike>() != null)
             StartCoroutine(DieAndRespawn());
     }
 
