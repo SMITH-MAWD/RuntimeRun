@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Playables;
+using UnityEngine.Events;   // <-- added for the event
 
 public class answerfieldfin2 : MonoBehaviour
 {
@@ -11,11 +12,15 @@ public class answerfieldfin2 : MonoBehaviour
     [Tooltip("Assign one or more Play_Ifttrue components to trigger when the correct answer is entered.")]
     [SerializeField] private Play_Ifttrue[] timelineControllers = new Play_Ifttrue[0];
 
+    // --- NEW: Event that other scripts can listen to ---
+    [Header("Events")]
+    public UnityEvent OnCorrectAnswer;
+
     // Exact expected answer
-    private const string correctAnswer = "True";
+    private const string correctAnswer = "False";
 
     private bool timerStarted = false;
-    private bool hasAnswered = false; // prevents re-triggering during this session
+    private bool hasAnswered = false;
 
     void Start()
     {
@@ -31,7 +36,6 @@ public class answerfieldfin2 : MonoBehaviour
         inputField.onEndEdit.AddListener(OnSubmit);
         inputField.onValueChanged.AddListener(OnValueChanged);
 
-        // Auto-assign timeline controllers if none provided in inspector
         if (timelineControllers == null || timelineControllers.Length == 0)
         {
             timelineControllers = Object.FindObjectsOfType<Play_Ifttrue>();
@@ -70,15 +74,18 @@ public class answerfieldfin2 : MonoBehaviour
 
             if (hasAnswered)
             {
-                Debug.Log("answerfieldfin2: Already answered; skipping timeline replay.");
-                // still clear input so the player sees it accepted
+                Debug.Log("answerfieldfin2: Already answered; skipping effects.");
                 inputField.text = string.Empty;
                 inputField.DeactivateInputField();
                 return;
             }
 
-            Debug.Log("answerfieldfin2: Correct answer entered. Revealing platforms and triggering timelines.");
+            Debug.Log("answerfieldfin2: Correct answer entered.");
 
+            // --- Invoke the event (so any listener, like correctanswernephew, gets notified) ---
+            OnCorrectAnswer?.Invoke();
+
+            // Existing platform reveal
             var platforms = FindObjectsOfType<smallplatscrpt16>();
             if (platforms != null && platforms.Length > 0)
             {
@@ -86,48 +93,38 @@ public class answerfieldfin2 : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("answerfieldfin2: No smallplatscrpt16 instances found in the scene.");
+                Debug.LogWarning("answerfieldfin2: No smallplatscrpt16 instances found.");
             }
 
-            // Trigger all assigned timeline controllers
+            // Existing timeline trigger
             if (timelineControllers != null && timelineControllers.Length > 0)
             {
                 foreach (var ctl in timelineControllers)
                 {
-                    if (ctl != null)
-                    {
-                        ctl.TriggerTimeline();
-                        Debug.Log($"answerfieldfin2: Triggered timeline controller '{ctl.name}'.");
-                    }
+                    if (ctl != null) ctl.TriggerTimeline();
                 }
             }
             else
             {
-                // fallback: play any PlayableDirector(s) in the scene
                 var directors = Object.FindObjectsOfType<PlayableDirector>();
                 if (directors != null && directors.Length > 0)
                 {
-                    foreach (var pd in directors)
-                    {
-                        pd.Play();
-                        Debug.Log($"answerfieldfin2: Fallback played PlayableDirector '{pd.name}'.");
-                    }
+                    foreach (var pd in directors) pd.Play();
                 }
                 else
                 {
-                    Debug.LogWarning("answerfieldfin2: No timeline controllers or PlayableDirectors found to trigger.");
+                    Debug.LogWarning("answerfieldfin2: No timeline controllers or directors found.");
                 }
             }
 
-            hasAnswered = true; // prevent re-triggering during this session
+            hasAnswered = true;
 
-            // clear the field when input correct
             inputField.text = string.Empty;
             inputField.DeactivateInputField();
         }
         else
         {
-            Debug.Log($"answerfieldfin2: Incorrect answer entered: '{text}'");
+            Debug.Log($"answerfieldfin2: Incorrect answer: '{text}'");
             var errorTracker = Object.FindFirstObjectByType<errorscript>();
             if (errorTracker != null) errorTracker.IncrementError();
         }
