@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Path to Finale.unity
     guid: c18cd0412fe60e74c8ac856408542a35
   - enabled: 1
-    path: Assets/Scenes/CareFree.unity
+    path: Assets/Scenes/Finale.unity
     guid: f95f50cbf3ebb734a97e92e57af431c1
   - enabled: 1
     path: Assets/Scenes/Midway.unity
