@@ -1,15 +1,16 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody2D))]
 public class elevator : MonoBehaviour
 {
     public Transform pointA;
     public Transform pointB;
+
     public float speed = 20f;
     private Vector3 nextPosition;
     private Rigidbody2D _rb;
 
+    private bool _isMoving = false;
     private bool _playerOnboard;
     private const float ArrivalThreshold = 0.01f;
 
@@ -27,7 +28,7 @@ public class elevator : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!_playerOnboard)
+        if (!_isMoving)
             return;
 
         Vector3 target = Vector3.MoveTowards(_rb.position, nextPosition, speed * Time.fixedDeltaTime);
@@ -36,6 +37,7 @@ public class elevator : MonoBehaviour
         if (Vector2.Distance(_rb.position, nextPosition) <= ArrivalThreshold)
         {
             nextPosition = (nextPosition == pointA.position) ? pointB.position : pointA.position;
+            _isMoving = false;
         }
     }
 
@@ -45,6 +47,7 @@ public class elevator : MonoBehaviour
         {
             other.transform.parent = transform;
             _playerOnboard = true;
+            _isMoving = true;
         }
     }
 
@@ -54,6 +57,7 @@ public class elevator : MonoBehaviour
         {
             other.transform.parent = null;
             _playerOnboard = false;
+            _isMoving = false;
         }
     }
 }
