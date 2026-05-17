@@ -12,7 +12,7 @@ public class elevator : MonoBehaviour
 
     private bool _isMoving = false;
     private bool _playerOnboard;
-    private const float ArrivalThreshold = 0.01f;
+    private const float ArrivalThreshold = 0.1f;
 
 
     void Awake()
@@ -57,7 +57,6 @@ public class elevator : MonoBehaviour
         {
             other.transform.parent = null;
             _playerOnboard = false;
-            _isMoving = false;
         }
     }
 }
