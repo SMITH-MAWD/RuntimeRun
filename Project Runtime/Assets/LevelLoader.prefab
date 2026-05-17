@@ -222,7 +222,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1421738658867834136}
-  - component: {fileID: 4911279309715489674}
+  - component: {fileID: 871109555770880772}
   m_Layer: 0
   m_Name: LevelLoader
   m_TagString: Untagged
@@ -246,7 +246,7 @@ Transform:
   - {fileID: 1688415298785458352}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4911279309715489674
+--- !u!114 &871109555770880772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -255,8 +255,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4697555815175948525}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdee8319cc4fdd043aa7ad7edbe36aea, type: 3}
+  m_Script: {fileID: 11500000, guid: ad5cf4ae69a81f54aa0ff9ad236fe3c9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::OtherLevelLoader
   animator: {fileID: 1617817436560881906}
   transitionTime: 1
