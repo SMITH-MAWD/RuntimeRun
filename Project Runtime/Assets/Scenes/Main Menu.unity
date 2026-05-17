@@ -595,7 +595,7 @@ Transform:
   - {fileID: 1549913043}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1126599926
+--- !u!43 &1202731830
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -917,7 +917,7 @@ MonoBehaviour:
     rid: -2
   m_ShadowCastingSource: 1
   m_ShadowMesh:
-    m_Mesh: {fileID: 1126599926}
+    m_Mesh: {fileID: 1202731830}
     m_LocalBounds:
       m_Center: {x: 0, y: 0, z: 0}
       m_Extent: {x: 2.07387, y: 0.16, z: 0}
@@ -1273,7 +1273,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: -8846706326565358887, guid: 5f116ee80d18f124c841f616b437f2a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
