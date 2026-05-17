@@ -1,94 +1,73 @@
 fileFormatVersion: 2
-guid: 408e7c76394c875438e4995263f3c5b0
+guid: 472d4661ddfd0ba4098cd5ce18cd7dbd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9115938624207856695
-    second: sprite_sheet_0
+      213: 8797732555021258889
+    second: sprite_sheet (4)_0
   - first:
-      213: -8198574232401945530
-    second: sprite_sheet_1
+      213: 4371450361299419547
+    second: sprite_sheet (4)_1
   - first:
-      213: 7710496705314228017
-    second: sprite_sheet_2
+      213: -8761659471556564494
+    second: sprite_sheet (4)_2
   - first:
-      213: -5321099399631716182
-    second: sprite_sheet_3
+      213: 2131053515992748241
+    second: sprite_sheet (4)_3
   - first:
-      213: -1793167431768321461
-    second: sprite_sheet_4
+      213: -9096214609465973787
+    second: sprite_sheet (4)_4
   - first:
-      213: -6949385356650754131
-    second: sprite_sheet_5
+      213: -2391365679315162165
+    second: sprite_sheet (4)_5
   - first:
-      213: 6512634512270057540
-    second: sprite_sheet_6
+      213: 3750322775263377569
+    second: sprite_sheet (4)_6
   - first:
-      213: -7430669329385756642
-    second: sprite_sheet_7
+      213: -7009493895833670034
+    second: sprite_sheet (4)_7
   - first:
-      213: -3146629568311226097
-    second: sprite_sheet_8
+      213: -4892497509593879158
+    second: sprite_sheet (4)_8
   - first:
-      213: -156822502178163421
-    second: sprite_sheet_9
+      213: 1386233571122348791
+    second: sprite_sheet (4)_9
   - first:
-      213: 6133340304394382675
-    second: sprite_sheet_10
+      213: -7879807425276047888
+    second: sprite_sheet (4)_10
   - first:
-      213: -6388650513183194314
-    second: sprite_sheet_11
+      213: -8887060191552511342
+    second: sprite_sheet (4)_11
   - first:
-      213: 2262686526604635532
-    second: sprite_sheet_12
+      213: 7902438246181920343
+    second: sprite_sheet (4)_12
   - first:
-      213: -8872633310243311932
-    second: sprite_sheet_13
+      213: 6570787661012424248
+    second: sprite_sheet (4)_13
   - first:
-      213: 3969346113097963169
-    second: sprite_sheet_14
+      213: 6354574436555211242
+    second: sprite_sheet (4)_14
   - first:
-      213: 7445483725821379359
-    second: sprite_sheet_15
+      213: -3820958560009485962
+    second: sprite_sheet (4)_15
   - first:
-      213: -6995652126424886719
-    second: sprite_sheet_16
+      213: -4001617582255240934
+    second: sprite_sheet (4)_16
   - first:
-      213: 5231242890530785890
-    second: sprite_sheet_17
+      213: -7275808571310005269
+    second: sprite_sheet (4)_17
   - first:
-      213: -1151630185815640975
-    second: sprite_sheet_18
+      213: 5106534978164597806
+    second: sprite_sheet (4)_18
   - first:
-      213: 2067151712165190408
-    second: sprite_sheet_19
+      213: -2602899503487633607
+    second: sprite_sheet (4)_19
   - first:
-      213: 4667103529284151377
-    second: sprite_sheet_20
+      213: 6795870089449999466
+    second: sprite_sheet (4)_20
   - first:
-      213: 7153851571046563884
-    second: sprite_sheet_21
-  - first:
-      213: -4201433854081919907
-    second: sprite_sheet_22
-  - first:
-      213: -2920021762099056970
-    second: sprite_sheet_23
-  - first:
-      213: -6779709807599877033
-    second: sprite_sheet_24
-  - first:
-      213: -5580464404804589263
-    second: sprite_sheet_25
-  - first:
-      213: 7369815172234780086
-    second: sprite_sheet_26
-  - first:
-      213: -2412474679267288129
-    second: sprite_sheet_27
-  - first:
-      213: 1783502025590196946
-    second: sprite_sheet_28
+      213: -7913168872810066123
+    second: sprite_sheet (4)_21
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -132,7 +111,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 1900
@@ -171,7 +150,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 12
+    textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -184,13 +163,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Skill1-1
+      name: sprite_sheet (4)_7
       rect:
         serializedVersion: 2
-        x: 136
-        y: 1243
-        width: 749
-        height: 608
+        x: 2012
+        y: 1695
+        width: 966
+        height: 829
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -199,20 +178,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4256aea8b36d17e0800000000000000
-      internalID: -1793167431768321461
+      spriteID: e6ea09b807649be90800000000000000
+      internalID: -7009493895833670034
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Skill1-2
+      name: sprite_sheet (4)_9
       rect:
         serializedVersion: 2
-        x: 1256
-        y: 1317
-        width: 927
-        height: 506
+        x: 3676
+        y: 1695
+        width: 963
+        height: 830
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,20 +200,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e1862924d95f0e890800000000000000
-      internalID: -7430669329385756642
+      spriteID: 7f2087e9614ec3310800000000000000
+      internalID: 1386233571122348791
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Skill 1-2(var)
+      name: sprite_sheet (4)_12
       rect:
         serializedVersion: 2
-        x: 2391
-        y: 1317
-        width: 930
-        height: 506
+        x: 245
+        y: 1785
+        width: 1146
+        height: 671
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -243,20 +222,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 35d6302d2800e1550800000000000000
-      internalID: 6133340304394382675
+      spriteID: 75e522b47b91bad60800000000000000
+      internalID: 7902438246181920343
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Skill 1_3
+      name: sprite_sheet (4)_14
       rect:
         serializedVersion: 2
-        x: 151
-        y: 665
-        width: 761
-        height: 508
+        x: 1412
+        y: 2084
+        width: 6
+        height: 20
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -265,20 +244,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c8de450686da66f10800000000000000
-      internalID: 2262686526604635532
+      spriteID: ae1c6a538cbff2850800000000000000
+      internalID: 6354574436555211242
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: skill 1-3(var)
+      name: sprite_sheet (4)_16
       rect:
         serializedVersion: 2
-        x: 1316
-        y: 679
-        width: 757
-        height: 508
+        x: 376
+        y: 882
+        width: 911
+        height: 781
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -287,20 +266,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1a618c56243f51730800000000000000
-      internalID: 3969346113097963169
+      spriteID: a1908baa2066778c0800000000000000
+      internalID: -4001617582255240934
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: skill 1-4
+      name: sprite_sheet (4)_17
       rect:
         serializedVersion: 2
-        x: 2271
-        y: 674
-        width: 1119
-        height: 516
+        x: 2039
+        y: 881
+        width: 910
+        height: 782
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -309,20 +288,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1421d30a4737aee90800000000000000
-      internalID: -6995652126424886719
+      spriteID: be3235d37a2270b90800000000000000
+      internalID: -7275808571310005269
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: skill 1-4 (var)
+      name: sprite_sheet (4)_18
+      rect:
+        serializedVersion: 2
+        x: 3379
+        y: 928
+        width: 1536
+        height: 689
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e24ab9ec18e0ed640800000000000000
+      internalID: 5106534978164597806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_sheet (4)_20
       rect:
         serializedVersion: 2
         x: 0
-        y: 53
-        width: 1117
-        height: 516
+        y: 80
+        width: 1644
+        height: 687
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -331,8 +332,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 80b527ca78fffac10800000000000000
-      internalID: 2067151712165190408
+      spriteID: a6c8e5d17d7cf4e50800000000000000
+      internalID: 6795870089449999466
       vertices: []
       indices: 
       edges: []
@@ -341,7 +342,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 090fe9dd08e8a2248847490593eb3fec
+    spriteID: 4652d373f3d488448abac929d9cb9497
     internalID: 0
     vertices: []
     indices: 
@@ -353,27 +354,28 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Skill 1-2(var): 6133340304394382675
-      Skill 1_3: 2262686526604635532
-      Skill1-1: -1793167431768321461
-      Skill1-2: -7430669329385756642
-      skill 1-3(var): 3969346113097963169
-      skill 1-4: -6995652126424886719
-      skill 1-4 (var): 2067151712165190408
-      sprite_sheet_0: -9115938624207856695
-      sprite_sheet_1: -8198574232401945530
-      sprite_sheet_11: -6388650513183194314
-      sprite_sheet_13: -8872633310243311932
-      sprite_sheet_15: 7445483725821379359
-      sprite_sheet_17: 5231242890530785890
-      sprite_sheet_18: -1151630185815640975
-      sprite_sheet_2: 7710496705314228017
-      sprite_sheet_20: 4667103529284151377
-      sprite_sheet_3: -5321099399631716182
-      sprite_sheet_5: -6949385356650754131
-      sprite_sheet_6: 6512634512270057540
-      sprite_sheet_8: -3146629568311226097
-      sprite_sheet_9: -156822502178163421
+      sprite_sheet (4)_0: 8797732555021258889
+      sprite_sheet (4)_1: 4371450361299419547
+      sprite_sheet (4)_10: -7879807425276047888
+      sprite_sheet (4)_11: -8887060191552511342
+      sprite_sheet (4)_12: 7902438246181920343
+      sprite_sheet (4)_13: 6570787661012424248
+      sprite_sheet (4)_14: 6354574436555211242
+      sprite_sheet (4)_15: -3820958560009485962
+      sprite_sheet (4)_16: -4001617582255240934
+      sprite_sheet (4)_17: -7275808571310005269
+      sprite_sheet (4)_18: 5106534978164597806
+      sprite_sheet (4)_19: -2602899503487633607
+      sprite_sheet (4)_2: -8761659471556564494
+      sprite_sheet (4)_20: 6795870089449999466
+      sprite_sheet (4)_21: -7913168872810066123
+      sprite_sheet (4)_3: 2131053515992748241
+      sprite_sheet (4)_4: -9096214609465973787
+      sprite_sheet (4)_5: -2391365679315162165
+      sprite_sheet (4)_6: 3750322775263377569
+      sprite_sheet (4)_7: -7009493895833670034
+      sprite_sheet (4)_8: -4892497509593879158
+      sprite_sheet (4)_9: 1386233571122348791
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

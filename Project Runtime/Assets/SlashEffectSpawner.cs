@@ -12,12 +12,65 @@ public class SlashEffectSpawner : MonoBehaviour
 
     private readonly Dictionary<string, GameObject> fxByEventName = new();
     private readonly Dictionary<int, Coroutine> deactivateJobs = new();
+    private readonly Dictionary<Transform, Vector3> originalLocalPositions = new();
+    private readonly Dictionary<Transform, Vector3> originalLocalScales = new();
 
-    private static readonly Regex HitKeyPattern = new(@"^(Hit\d+)", RegexOptions.IgnoreCase);
+    private SpriteRenderer facingRenderer;
+    private bool lastFlipX;
+
+    private static readonly Regex HitKeyPattern = new(
+        @"^(HitVar\d+|Hit\d+|Dead\d+|Smoke\d+)",
+        RegexOptions.IgnoreCase);
 
     private void Awake()
     {
+        facingRenderer = GetComponent<SpriteRenderer>();
+        if (facingRenderer == null)
+            facingRenderer = GetComponentInParent<SpriteRenderer>();
+
         RefreshEffects(disableOnRegister: true);
+    }
+
+    private void LateUpdate()
+    {
+        if (facingRenderer != null)
+            SyncFacing(facingRenderer.flipX);
+    }
+
+    public void SyncFacing(bool flipX, bool force = false)
+    {
+        if (!force && flipX == lastFlipX && originalLocalPositions.Count > 0)
+            return;
+
+        lastFlipX = flipX;
+        float sign = flipX ? -1f : 1f;
+
+        foreach (var entry in originalLocalPositions)
+        {
+            Transform t = entry.Key;
+            if (t == null)
+                continue;
+
+            Vector3 originPos = entry.Value;
+            t.localPosition = new Vector3(originPos.x * sign, originPos.y, originPos.z);
+
+            if (originalLocalScales.TryGetValue(t, out Vector3 originScale))
+            {
+                t.localScale = new Vector3(
+                    Mathf.Abs(originScale.x) * sign,
+                    originScale.y,
+                    originScale.z);
+            }
+        }
+    }
+
+    private void CacheFacingTransform(Transform t)
+    {
+        if (t == null || originalLocalPositions.ContainsKey(t))
+            return;
+
+        originalLocalPositions[t] = t.localPosition;
+        originalLocalScales[t] = t.localScale;
     }
 
 #if UNITY_EDITOR
@@ -66,7 +119,7 @@ public class SlashEffectSpawner : MonoBehaviour
         {
             Debug.LogWarning(
                 "SlashEffectSpawner: no slash FX found. Put SlashEffectSpawner on Boss (not on the slash). "
-                + "Name slash objects Hit1, Hit2… with particle effects under "
+                + "Name slash objects Hit1 / HitVar1 / Dead1 etc. with particle effects under "
                 + searchRoot.name + ".",
                 this);
         }
@@ -97,9 +150,13 @@ public class SlashEffectSpawner : MonoBehaviour
         if (!fxByEventName.ContainsKey(key))
         {
             fxByEventName[key] = fx;
+            CacheFacingTransform(fx.transform);
             DisableAutoPlay(fx);
             if (disableOnRegister)
                 fx.SetActive(false);
+
+            if (facingRenderer != null)
+                SyncFacing(facingRenderer.flipX);
         }
     }
 
@@ -153,6 +210,9 @@ public class SlashEffectSpawner : MonoBehaviour
 
         if (deactivateJobs.TryGetValue(id, out Coroutine running) && running != null)
             StopCoroutine(running);
+
+        if (facingRenderer != null)
+            SyncFacing(facingRenderer.flipX, force: true);
 
         fx.SetActive(true);
         PlayAllParticles(fx);
