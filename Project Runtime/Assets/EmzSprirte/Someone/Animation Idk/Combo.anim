@@ -45,17 +45,13 @@ AnimationClip:
       value: {fileID: -7430669329385756642, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - time: 0.25
       value: {fileID: 6133340304394382675, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - time: 0.43333334
-      value: {fileID: -7430669329385756642, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - time: 0.55
-      value: {fileID: 6133340304394382675, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - time: 0.93333334
       value: {fileID: 2262686526604635532, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - time: 1.3166667
+    - time: 0.93333334
       value: {fileID: 3969346113097963169, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - time: 1.9
+    - time: 1.5166667
       value: {fileID: -6995652126424886719, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - time: 2.4333334
+    - time: 1.85
       value: {fileID: 2067151712165190408, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     attribute: m_Sprite
     path: 
@@ -90,8 +86,6 @@ AnimationClip:
     pptrCurveMapping:
     - {fileID: -7430669329385756642, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - {fileID: 6133340304394382675, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - {fileID: -7430669329385756642, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
-    - {fileID: 6133340304394382675, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - {fileID: 2262686526604635532, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - {fileID: 3969346113097963169, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
     - {fileID: -6995652126424886719, guid: 408e7c76394c875438e4995263f3c5b0, type: 3}
@@ -101,7 +95,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 2.45
+    m_StopTime: 1.8666667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -149,34 +143,6 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0
-    functionName: OnSlashAnimationEvent
-    data: Smoke
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.1
-    functionName: DeactivateNow
-    data: 
-    objectReferenceParameter: {fileID: 1225138781783730308, guid: 15716f9f18fdf0c4eb8a851846945e39, type: 3}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.8833333
-    functionName: OnSlashAnimationEvent
-    data: Hit2
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 1.9333333
-    functionName: OnSlashAnimationEvent
-    data: Hit3
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
   - time: 0.06666667
     functionName: EnableAttackHitbox
     data: 
@@ -191,35 +157,49 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.8833333
+  - time: 0.48333332
+    functionName: OnSlashAnimationEvent
+    data: Hit2
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.48333332
     functionName: EnableAttackHitbox
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.05
+  - time: 0.65
     functionName: DisableAttackHitbox
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.9333333
+  - time: 1.3166667
+    functionName: OnSlashAnimationEvent
+    data: Hit3
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.4333333
     functionName: EnableAttackHitbox
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.1
+  - time: 1.6
     functionName: DisableAttackHitbox
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.4
+  - time: 1.8166667
     functionName: OnAttackFinished
     data: 
     objectReferenceParameter: {fileID: 0}

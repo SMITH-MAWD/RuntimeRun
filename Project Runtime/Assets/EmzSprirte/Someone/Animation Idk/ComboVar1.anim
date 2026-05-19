@@ -104,13 +104,6 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: OnSlashAnimationEvent
-    data: SmokeVariant
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0
     functionName: FacePlayer
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -131,20 +124,6 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.26666668
-    functionName: 
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.3
-    functionName: DeactivateNow
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
   - time: 0.31666666
     functionName: DealDamageToPlayer
     data: 
@@ -155,13 +134,6 @@ AnimationClip:
   - time: 0.38333333
     functionName: OnSlashAnimationEvent
     data: HitVar2
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.5
-    functionName: 
-    data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
@@ -182,13 +154,6 @@ AnimationClip:
     messageOptions: 0
   - time: 1.35
     functionName: DealDamageToPlayer
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 1.3833333
-    functionName: 
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -19,22 +19,31 @@ public class BossAI : MonoBehaviour
     [Header("Hurt")]
     [SerializeField] private float hurtLockDuration = 0.45f;
 
+    [Header("Trigger Detection (Empty Child with BoxCollider2D)")]
+    [SerializeField] private Collider2D attackTriggerZone;          // Drag the empty child trigger here
+    [SerializeField] private bool useTriggerZoneInsteadOfDistance = true;
+
+    [Header("Knockback (Push)")]
+    [SerializeField] private float knockbackForce = 8f;
+    [SerializeField] private float knockbackDuration = 0.2f;
+
     [Header("Animator Parameters")]
-    [SerializeField] private string comboParam = "Combo";
-    [SerializeField] private string comboVarParam = "ComboVar";
+    [SerializeField] private string comboParam = "Combo";        // Now a bool
+    [SerializeField] private string comboVarParam = "ComboVar";  // Now a bool
     [SerializeField] private string dashParam = "Dash";
     [SerializeField] private string deadParam = "Dead";
     [SerializeField] private string hurtHorseParam = "HurtHorse";
     [SerializeField] private string hurtNoHorseParam = "HurtNohorse";
 
     [Header("Hitboxes")]
-    [SerializeField] private BossAttackHitbox attackHitbox;
+    [SerializeField] private BossAttackHitbox attackHitbox;   // For damage (can also be a plain Collider2D)
 
     private Animator anim;
     private Health health;
     private Transform player;
     private SpriteRenderer spriteRenderer;
     private SlashEffectSpawner slashSpawner;
+    private Rigidbody2D playerRb;   // For knockback
 
     private bool isDead;
     private bool isDashing;
@@ -68,7 +77,10 @@ public class BossAI : MonoBehaviour
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
+        {
             player = playerObj.transform;
+            playerRb = playerObj.GetComponent<Rigidbody2D>();
+        }
 
         EnsureAttackHitbox();
         CacheAttackHitboxDefaultPosition();
@@ -89,6 +101,13 @@ public class BossAI : MonoBehaviour
         health.onDamage.AddListener(OnBossDamaged);
         health.onDeath.AddListener(OnBossDeath);
         dashCooldownTimer = 0f;
+
+        if (useTriggerZoneInsteadOfDistance && attackTriggerZone != null)
+        {
+            var col = attackTriggerZone as BoxCollider2D;
+            if (col != null && !col.isTrigger)
+                Debug.LogWarning("Attack trigger zone should have 'Is Trigger' enabled.", this);
+        }
     }
 
     private void Update()
@@ -126,8 +145,6 @@ public class BossAI : MonoBehaviour
         if (isHurting)
             return;
 
-        float distance = HorizontalDistanceToPlayer();
-
         if (isAttacking)
         {
             ApplyLockedFacing();
@@ -136,16 +153,26 @@ public class BossAI : MonoBehaviour
 
         FacePlayer();
 
-        if (distance <= attackRange && attackCooldownTimer <= 0f)
+        if (useTriggerZoneInsteadOfDistance && attackTriggerZone != null)
         {
-            PerformComboAttack();
+            // Attack triggered by OnTriggerEnter2D
+            ChasePlayer();
+            if (dashCooldownTimer <= 0f)
+                StartDash();
         }
         else
         {
-            ChasePlayer();
-
-            if (dashCooldownTimer <= 0f)
-                StartDash();
+            float distance = HorizontalDistanceToPlayer();
+            if (distance <= attackRange && attackCooldownTimer <= 0f)
+            {
+                PerformComboAttack();
+            }
+            else
+            {
+                ChasePlayer();
+                if (dashCooldownTimer <= 0f)
+                    StartDash();
+            }
         }
     }
 
@@ -156,14 +183,27 @@ public class BossAI : MonoBehaviour
         SyncAttackHitboxFacing(flipX);
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isDead || player == null) return;
+        if (!useTriggerZoneInsteadOfDistance) return;
+        if (attackTriggerZone == null) return;
+
+        if (other == attackTriggerZone && other.CompareTag("Player"))
+        {
+            if (!isAttacking && !isDashing && !isHurting && attackCooldownTimer <= 0f)
+            {
+                PerformComboAttack();
+            }
+        }
+    }
+
     private void EnsureAttackHitbox()
     {
-        if (attackHitbox != null)
-            return;
+        if (attackHitbox != null) return;
 
         attackHitbox = GetComponentInChildren<BossAttackHitbox>(true);
-        if (attackHitbox != null)
-            return;
+        if (attackHitbox != null) return;
 
         GameObject hitboxObject = new GameObject("BossAttackHitbox");
         hitboxObject.transform.SetParent(transform, false);
@@ -200,7 +240,7 @@ public class BossAI : MonoBehaviour
         return Mathf.Abs(player.position.x - transform.position.x);
     }
 
-    private void FacePlayer()
+    public void FacePlayer()
     {
         if (player == null || spriteRenderer == null || attackFacingLocked)
             return;
@@ -210,16 +250,13 @@ public class BossAI : MonoBehaviour
 
     private void ApplyLockedFacing()
     {
-        if (spriteRenderer == null)
-            return;
-
+        if (spriteRenderer == null) return;
         spriteRenderer.flipX = lockedFlipX;
     }
 
     private void SyncAttackHitboxFacing(bool flipX)
     {
-        if (attackHitbox == null || !attackHitboxPosCached)
-            return;
+        if (attackHitbox == null || !attackHitboxPosCached) return;
 
         float sign = flipX ? -1f : 1f;
         Transform hitboxTransform = attackHitbox.transform;
@@ -251,11 +288,9 @@ public class BossAI : MonoBehaviour
 
     private void PerformComboAttack()
     {
-        if (isAttacking || anim == null)
-            return;
+        if (isAttacking || anim == null) return;
 
-        if (isDashing)
-            EndDash();
+        if (isDashing) EndDash();
 
         isAttacking = true;
         attackCooldownTimer = comboCooldown;
@@ -265,18 +300,21 @@ public class BossAI : MonoBehaviour
         slashSpawner?.SyncFacing(lockedFlipX, force: true);
         SyncAttackHitboxFacing(lockedFlipX);
 
+        // Using bools instead of triggers
         if (Random.value <= comboChance)
         {
             isInCombo = true;
             isInComboVar = false;
-            anim.SetTrigger(comboParam);
+            anim.SetBool(comboParam, true);
+            anim.SetBool(comboVarParam, false);
             attackHitbox?.SetDamage(comboDamage);
         }
         else
         {
             isInCombo = false;
             isInComboVar = true;
-            anim.SetTrigger(comboVarParam);
+            anim.SetBool(comboParam, false);
+            anim.SetBool(comboVarParam, true);
             attackHitbox?.SetDamage(comboVarDamage);
         }
     }
@@ -293,8 +331,7 @@ public class BossAI : MonoBehaviour
 
     public void DealDamageToPlayer()
     {
-        if (player == null)
-            return;
+        if (player == null) return;
 
         int damage = isInComboVar ? comboVarDamage : comboDamage;
         Health playerHealth = player.GetComponent<Health>();
@@ -303,6 +340,27 @@ public class BossAI : MonoBehaviour
 
         if (playerHealth != null)
             playerHealth.TakeDamage(damage);
+
+        // Apply knockback / push to the player
+        ApplyKnockbackToPlayer();
+    }
+
+    private void ApplyKnockbackToPlayer()
+    {
+        if (playerRb == null)
+        {
+            playerRb = player.GetComponent<Rigidbody2D>();
+            if (playerRb == null) return;
+        }
+
+        // Direction: away from the boss (or based on boss facing direction)
+        float direction = lockedFlipX ? -1f : 1f; // If boss faces left, push left; if faces right, push right
+        Vector2 knockbackDir = new Vector2(direction, 0.5f).normalized;
+        playerRb.linearVelocity = Vector2.zero;
+        playerRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
+
+        // Optional: Disable player control briefly (if you have a PlayerController script)
+        // You can implement a coroutine to re-enable after knockbackDuration.
     }
 
     public void OnAttackFinished()
@@ -312,6 +370,13 @@ public class BossAI : MonoBehaviour
         isInComboVar = false;
         attackFacingLocked = false;
         DisableAttackHitbox();
+
+        // Reset animator bools
+        if (anim != null)
+        {
+            anim.SetBool(comboParam, false);
+            anim.SetBool(comboVarParam, false);
+        }
 
         FacePlayer();
         if (spriteRenderer != null)
@@ -329,8 +394,7 @@ public class BossAI : MonoBehaviour
 
     private void OnBossDamaged()
     {
-        if (isDead)
-            return;
+        if (isDead) return;
 
         isAttacking = false;
         attackFacingLocked = false;
@@ -338,8 +402,11 @@ public class BossAI : MonoBehaviour
         isHurting = true;
         hurtTimer = hurtLockDuration;
 
-        if (anim == null)
-            return;
+        if (anim == null) return;
+
+        // Reset combo bools
+        anim.SetBool(comboParam, false);
+        anim.SetBool(comboVarParam, false);
 
         if (isInComboVar)
             anim.SetTrigger(hurtNoHorseParam);
@@ -363,6 +430,8 @@ public class BossAI : MonoBehaviour
         if (anim != null)
         {
             anim.SetBool(dashParam, false);
+            anim.SetBool(comboParam, false);
+            anim.SetBool(comboVarParam, false);
             anim.SetTrigger(deadParam);
         }
 
@@ -371,9 +440,7 @@ public class BossAI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (health == null)
-            return;
-
+        if (health == null) return;
         health.onDamage.RemoveListener(OnBossDamaged);
         health.onDeath.RemoveListener(OnBossDeath);
     }
@@ -384,4 +451,3 @@ public class BossAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
-    

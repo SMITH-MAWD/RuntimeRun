@@ -14,7 +14,7 @@ TagManager:
   - Water
   - UI
   - Glowww
-  - 
+  - Boss
   - 
   - 
   - 
@@ -48,6 +48,21 @@ TagManager:
     locked: 0
   - name: Mask
     uniqueID: 3204643841
+    locked: 0
+  - name: Sky
+    uniqueID: 1804479503
+    locked: 0
+  - name: Back
+    uniqueID: 293871233
+    locked: 0
+  - name: Player
+    uniqueID: 2291361853
+    locked: 0
+  - name: Front
+    uniqueID: 512587473
+    locked: 0
+  - name: 
+    uniqueID: 155522225
     locked: 0
   m_RenderingLayers:
   - Default

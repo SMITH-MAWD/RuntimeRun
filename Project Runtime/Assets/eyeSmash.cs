@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;   // for UnityEvent
 
 public class eyeSmash : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class eyeSmash : MonoBehaviour
     public float pauseBeforeSmash = 1f;
 
     [Header("Drop Acceleration")]
-    public float dropAcceleration = 40f;      // units per second²
-    public float maxDropSpeed = 80f;          // max fall speed
+    public float dropAcceleration = 40f;
+    public float maxDropSpeed = 80f;
 
     [Header("Rise & Return")]
     public float riseDuration = 2f;
@@ -29,6 +30,9 @@ public class eyeSmash : MonoBehaviour
     public GameObject killEffect;
     public GameObject impactEffect;
     public float impactDelay = 0.1f;
+
+    [Header("Impact Event (for camera shake)")]
+    public UnityEvent onImpactEvent;   // Drag impulse source's GenerateImpulse here
 
     private enum State { Follow, Wait, Drop, Rise, Return }
     private State state = State.Follow;
@@ -82,7 +86,6 @@ public class eyeSmash : MonoBehaviour
                 break;
 
             case State.Drop:
-                // Accelerate
                 currentDropSpeed = Mathf.Min(currentDropSpeed + dropAcceleration * Time.deltaTime, maxDropSpeed);
                 transform.position = Vector2.MoveTowards(transform.position, dropTarget, currentDropSpeed * Time.deltaTime);
                 if (!impactTriggered && Vector2.Distance(transform.position, dropTarget) < 0.1f)
@@ -134,7 +137,7 @@ public class eyeSmash : MonoBehaviour
     void StartDrop()
     {
         state = State.Drop;
-        currentDropSpeed = 0f;   // start from 0 and accelerate
+        currentDropSpeed = 0f;
         float groundY = (groundPoint != null) ? groundPoint.position.y : GetGroundY();
         dropTarget = new Vector2(transform.position.x, groundY);
     }
@@ -149,6 +152,9 @@ public class eyeSmash : MonoBehaviour
     {
         if (impactTriggered) return;
         impactTriggered = true;
+
+        // Fire the UnityEvent – this will call GenerateImpulse if set up
+        onImpactEvent.Invoke();
 
         if (impactEffect != null)
             Instantiate(impactEffect, transform.position, Quaternion.identity);
