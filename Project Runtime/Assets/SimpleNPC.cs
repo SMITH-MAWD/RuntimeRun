@@ -6,9 +6,14 @@ using UnityEngine.Playables;
 
 public class SimpleNPC : MonoBehaviour
 {
-    [Header("Dialogue")]
-    public string[] lines = new string[] { "Hello!", "How are you?" };
-    public float textSpeed = 0.03f;
+    [Header("Dialogue Sets")]
+    public string[] firstTimeLines = new string[] { "Hello stranger!", "Welcome to my shop." };
+    public string[] repeatLines = new string[] { "Back again?", "What do you need?" };
+
+    [Header("Settings")]
+    public float textSpeed = 0.05f;          // Adjust for typing speed
+    public bool useTalkCounter = true;
+    [SerializeField] private int timesTalked = 0;
 
     [Header("UI References")]
     public GameObject dialoguePanel;
@@ -24,7 +29,8 @@ public class SimpleNPC : MonoBehaviour
 
     private bool isPlayerNear = false;
     private bool isTalking = false;
-    private int index;
+    private int currentLineIndex = 0;
+    private string[] currentLines;
 
     void Update()
     {
@@ -33,19 +39,22 @@ public class SimpleNPC : MonoBehaviour
 
         if (isTalking && Input.GetKeyDown(KeyCode.Space))
         {
-            if (dialogueText.text == lines[index])
+            if (dialogueText.text == currentLines[currentLineIndex])
                 NextLine();
             else
             {
                 StopAllCoroutines();
-                dialogueText.text = lines[index];
+                dialogueText.text = currentLines[currentLineIndex];
             }
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player")) isPlayerNear = true;
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = true;
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -57,37 +66,50 @@ public class SimpleNPC : MonoBehaviour
         }
     }
 
-    // Made public for Timeline signals
     public void StartDialogue()
     {
+        if (dialoguePanel == null) return;
+
+        // Choose dialogue set
+        if (useTalkCounter && timesTalked > 0)
+            currentLines = repeatLines;
+        else
+            currentLines = firstTimeLines;
+
+        if (currentLines == null || currentLines.Length == 0)
+            currentLines = new string[] { "Hello." };
+
         isTalking = true;
         dialoguePanel.SetActive(true);
         nameText.text = gameObject.name;
+
         if (speakTimeline != null) speakTimeline.Play();
         onDialogueOpen.Invoke();
 
-        index = 0;
+        currentLineIndex = 0;
         dialogueText.text = "";
-        StartCoroutine(TypeLine());
+        StartCoroutine(TypeLine(currentLines[currentLineIndex]));
+
+        if (useTalkCounter) timesTalked++;
     }
 
-    IEnumerator TypeLine()
+    IEnumerator TypeLine(string line)
     {
-        foreach (char c in lines[index].ToCharArray())
+        dialogueText.text = "";
+        foreach (char c in line)
         {
             dialogueText.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
     }
 
-    // Made public for Timeline signals
     public void NextLine()
     {
-        if (index < lines.Length - 1)
+        if (currentLineIndex < currentLines.Length - 1)
         {
-            index++;
+            currentLineIndex++;
             dialogueText.text = "";
-            StartCoroutine(TypeLine());
+            StartCoroutine(TypeLine(currentLines[currentLineIndex]));
         }
         else
         {
@@ -95,12 +117,21 @@ public class SimpleNPC : MonoBehaviour
         }
     }
 
-    // Made public for Timeline signals
     public void EndDialogue()
     {
         isTalking = false;
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (speakTimeline != null) speakTimeline.Stop();
         onDialogueClose.Invoke();
+    }
+
+    public void ResetTalkCount()
+    {
+        timesTalked = 0;
+    }
+
+    public void SetDialogueSet(string[] newLines)
+    {
+        firstTimeLines = newLines;
     }
 }
