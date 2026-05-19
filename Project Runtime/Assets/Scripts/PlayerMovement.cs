@@ -10,18 +10,46 @@ public class PlayerMovement : MonoBehaviour
 
 	// When false, movement and jump input are ignored (e.g. when a console/question UI is open).
 	public bool inputEnabled = true;
+	private bool _isMoving = false;
+	private bool _isGrounded = false;
 
 	#region Variables
 	//Components
 	public Rigidbody2D RB { get; private set; }
 
 	//Variables control the various actions the player can perform at any time.
-	//These are fields which can are public allowing for other sctipts to read them
-	//but can only be privately written to.
+	public bool IsMoving { 
+		get { 
+		return _isMoving; 
+		} private set {
+			_isMoving = value;
+			animator.SetBool("isMoving", value);
+		} 
+	}
+	public bool IsGrounded { 
+		get {
+			return _isGrounded;
+		} private set {
+			_isGrounded = value;
+			animator.SetBool("isGrounded", value);
+		}
+	}
+	public bool canMove {
+		get {
+			if (animator == null)
+				return true;
+			return animator.GetBool("canMove");
+		}
+		private set {
+			if (animator == null)
+				return;
+			animator.SetBool("canMove", value);
+		}
+	}
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
-	public bool IsGrounded { get; private set; }
+	public bool IsSliding { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
@@ -36,6 +64,11 @@ public class PlayerMovement : MonoBehaviour
 	//Wall Jump
 	private float _wallJumpStartTime;
 	private int _lastWallJumpDir;
+
+	// Live (this-frame) wall overlap flags. Used by slide so it can't trigger from a stale
+	// wall-coyote timer (which can be falsely refreshed if the wall-check box overlaps the floor).
+	private bool _isTouchingWallRight;
+	private bool _isTouchingWallLeft;
 
 	private Vector2 _moveInput;
 	public float LastPressedJumpTime { get; private set; }
@@ -57,6 +90,14 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField, Min(0f)] private float _groundRayInset = 0.05f;
 	[SerializeField] private bool _drawGroundRays = true;
 
+	[Header("Wall Raycast")]
+	// Use horizontal raycasts for wall detection so the wall check can never spuriously hit the floor.
+	[SerializeField] private bool _useRaycastWallCheck = true;
+	[SerializeField, Min(0.01f)] private float _wallRayLength = 0.1f;
+	[Tooltip("Vertical inset from the top/bottom of the collider for the wall rays (avoids scraping floor/ceiling).")]
+	[SerializeField, Min(0f)] private float _wallRayVerticalInset = 0.08f;
+	[SerializeField] private bool _drawWallRays = true;
+
 	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
 
@@ -64,18 +105,24 @@ public class PlayerMovement : MonoBehaviour
 	private readonly Collider2D[] _overlapResults = new Collider2D[8];
 	private readonly RaycastHit2D[] _raycastResults = new RaycastHit2D[8];
 
-	private Collider2D _mainCollider;
+	private CapsuleCollider2D _mainCollider;
 
 	// If the ground layer isn't configured, we fall back to "ground-like" accel so movement still works.
 	// (Otherwise, the controller can become permanently "airborne", and accelInAir = 0 results in no movement.)
 	private bool _warnedMissingGroundLayer;
+
+	[Header("Attack")]
+	[SerializeField, Min(0.05f)] private float _attackLockDuration	 = 0.5f;
+	private float _attackLockEndTime;
+	public bool IsAttacking => Time.time < _attackLockEndTime;
+	
 	#endregion
 
 	private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
-		_mainCollider = GetComponent<Collider2D>();
-		if (animator == null) animator = GetComponentInChildren<Animator>();
+		_mainCollider = GetComponent<CapsuleCollider2D>();
+		animator = GetComponentInChildren<Animator>();
 		CreateCheckPointsIfMissing();
 	}
 
@@ -164,7 +211,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool IsGroundedRaycast()
 	{
 		if (_mainCollider == null)
-			_mainCollider = GetComponent<Collider2D>();
+			_mainCollider = GetComponent<CapsuleCollider2D>();
 		if (_mainCollider == null)
 			return false;
 
@@ -202,18 +249,54 @@ public class PlayerMovement : MonoBehaviour
 		return false;
 	}
 
+	// Horizontal-raycast wall check. Casts 3 short rays sideways from inside the collider at top/mid/lower-mid.
+	// dir = +1 for right, -1 for left.
+	private bool IsTouchingWallRaycast(int dir)
+	{
+		if (_mainCollider == null)
+			_mainCollider = GetComponent<CapsuleCollider2D>();
+		if (_mainCollider == null)
+			return false;
+
+		Bounds b = _mainCollider.bounds;
+		float halfWidth = b.extents.x;
+		float halfHeight = b.extents.y;
+		// Start origins just inside the collider edge so we don't begin already touching outside geometry.
+		float originX = b.center.x + dir * Mathf.Max(0f, halfWidth - 0.02f);
+		float vInset = Mathf.Clamp(_wallRayVerticalInset, 0f, Mathf.Max(0f, halfHeight - 0.01f));
+
+		Vector2 originTop = new Vector2(originX, b.max.y - vInset);
+		Vector2 originMid = new Vector2(originX, b.center.y);
+		Vector2 originBot = new Vector2(originX, b.min.y + vInset);
+		Vector2 direction = new Vector2(dir, 0f);
+
+		return RaycastWallFrom(originTop, direction)
+			|| RaycastWallFrom(originMid, direction)
+			|| RaycastWallFrom(originBot, direction);
+	}
+
+	private bool RaycastWallFrom(Vector2 origin, Vector2 direction)
+	{
+		ContactFilter2D filter = new ContactFilter2D
+		{
+			useTriggers = false
+		};
+		filter.SetLayerMask(_groundLayer);
+		filter.useLayerMask = true;
+
+		int hitCount = Physics2D.Raycast(origin, direction, filter, _raycastResults, _wallRayLength);
+		for (int i = 0; i < hitCount; i++)
+		{
+			Collider2D hitCol = _raycastResults[i].collider;
+			if (IsSelfCollider(hitCol))
+				continue;
+			return true;
+		}
+		return false;
+	}
+
 	private void Start()
 	{
-		// If not set in Inspector, try loading default from Resources (e.g. Resources/PlayerData.asset)
-		if (Data == null)
-		{
-			Data = Resources.Load<PlayerData>("PlayerData");
-			if (Data == null)
-			{
-				Debug.LogWarning("PlayerMovement: Assign a PlayerData asset in the Inspector, or place one at Resources/PlayerData.asset.", this);
-				return;
-			}
-		}
 		SetGravityScale(Data.gravityScale);
 		IsFacingRight = true;
 	}
@@ -236,7 +319,12 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region INPUT HANDLER
-		if (inputEnabled)
+		if (inputEnabled && Input.GetKeyDown(KeyCode.J) && IsGrounded)
+		{
+			onAttackInput();
+		}
+
+		if (inputEnabled && canMove && !IsAttacking)
 		{
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
@@ -262,35 +350,46 @@ public class PlayerMovement : MonoBehaviour
 		#endregion
 
 		#region COLLISION CHECKS
+		// Reset live wall-touch flags every frame so they only stay true while actually overlapping.
+		_isTouchingWallRight = false;
+		_isTouchingWallLeft = false;
+
+
+		bool grounded = _useRaycastGroundCheck
+			? IsGroundedRaycast()
+			: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
+		IsGrounded = grounded;
+
 		if (!IsJumping)
 		{
-			//Ground Check
-			bool grounded = _useRaycastGroundCheck
-				? IsGroundedRaycast()
-				: AnyGroundOverlapBox(_groundCheckPoint, _groundCheckSize);
-
-			if (grounded && !IsJumping) //checks if set box overlaps with ground
+			if (grounded) //checks if set box overlaps with ground
 			{
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
 			}
 
 			//Right Wall Check
-			bool rightWall =
-				(IsFacingRight
+			bool rightWall = _useRaycastWallCheck
+				? IsTouchingWallRaycast(+1)
+				: (IsFacingRight
 					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
 					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (rightWall && !IsWallJumping)
 				LastOnWallRightTime = Data.coyoteTime;
 
-			//Right Wall Check
-			bool leftWall =
-				(!IsFacingRight
+			//Left Wall Check
+			bool leftWall = _useRaycastWallCheck
+				? IsTouchingWallRaycast(-1)
+				: (!IsFacingRight
 					? AnyGroundOverlapBox(_frontWallCheckPoint, _wallCheckSize)
 					: AnyGroundOverlapBox(_backWallCheckPoint, _wallCheckSize));
 
 			if (leftWall && !IsWallJumping)
 				LastOnWallLeftTime = Data.coyoteTime;
+
+			// Cache live overlap state for slide (do NOT use coyote timers, which can be stale/falsely refreshed).
+			_isTouchingWallRight = rightWall;
+			_isTouchingWallLeft = leftWall;
 
 			//Two checks needed for both left and right walls since whenever the play turns the wall checkPoints swap sides
 			LastOnWallTime = Mathf.Max(LastOnWallLeftTime, LastOnWallRightTime);
@@ -342,9 +441,23 @@ public class PlayerMovement : MonoBehaviour
 		}
 		#endregion
 
+		#region SLIDE CHECKS
+		// Sliding requires an ACTIVE wall overlap this frame in the pressed direction (not coyote-time).
+		// This prevents gliding caused by the wall-check box spuriously overlapping the floor while grounded.
+		if (CanSlide() && ((_isTouchingWallLeft && _moveInput.x < 0) || (_isTouchingWallRight && _moveInput.x > 0)))
+			IsSliding = true;
+		else
+			IsSliding = false;
+		#endregion
+
 		#region GRAVITY
 		//Higher gravity if we've released the jump input or are falling
-		if (RB.linearVelocity.y < 0 && _moveInput.y < 0)
+		if (IsSliding)
+		{
+			// While sliding, disable gravity so Slide() can drive the y-velocity directly.
+			SetGravityScale(0);
+		}
+		else if (RB.linearVelocity.y < 0 && _moveInput.y < 0)
 		{
 			//Much higher gravity if holding down
 			SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
@@ -373,21 +486,20 @@ public class PlayerMovement : MonoBehaviour
 			//Default gravity if standing on a platform or moving upwards
 			SetGravityScale(Data.gravityScale);
 		}
-		animator.SetFloat("xVelocity", Mathf.Abs(RB.linearVelocity.x));
+		IsMoving = Mathf.Abs(RB.linearVelocity.x) > 0.1f;	
 		animator.SetFloat("yVelocity", RB.linearVelocity.y);
-		animator.SetBool("isJumping", IsJumping);
 	}
 #endregion
 	private void FixedUpdate()
 	{
 		if (Data == null)
 			return;
-
-		//Handle Run
 		if (IsWallJumping)
 			Run(Data.wallJumpRunLerp);
 		else
 			Run(1);
+		if (IsSliding)
+			Slide();
 	}
 
 	#region INPUT CALLBACKS
@@ -403,8 +515,6 @@ public class PlayerMovement : MonoBehaviour
 			_isJumpCut = true;
 	}
 
-	// Forces a jump immediately, bypassing grounded checks.
-	// Intended for scripted interactions (e.g. ladder-top "free jump").
 	public void ForceJump()
 	{
 		if (Data == null || RB == null)
@@ -420,6 +530,15 @@ public class PlayerMovement : MonoBehaviour
 		_isJumpFalling = false;
 		Jump();
 	}
+
+	public void onAttackInput()
+	{
+		animator.SetTrigger("attackTrigger");
+		// Stamp/extend the movement lock window. Each press resets the timer, so the
+		// player stays locked through chained hits without measuring animation length.
+		_attackLockEndTime = Time.time + _attackLockDuration;
+	}
+
 	#endregion
 
 	#region GENERAL METHODS
@@ -503,6 +622,19 @@ public class PlayerMovement : MonoBehaviour
 	}
 	#endregion
 
+	#region OTHER MOVEMENT METHODS
+	private void Slide()
+	{
+		// Drives y-velocity toward Data.slideSpeed using a force, similar to Run() but on the y-axis.
+		float speedDif = Data.slideSpeed - RB.linearVelocity.y;
+		float movement = speedDif * Data.slideAccel;
+		// Clamp the per-frame force so we don't overshoot the target slide speed (force * fixedDeltaTime <= |speedDif|).
+		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
+
+		RB.AddForce(movement * Vector2.up);
+	}
+	#endregion
+
 	#region JUMP METHODS
 	private void Jump()
 	{
@@ -520,6 +652,8 @@ public class PlayerMovement : MonoBehaviour
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 		#endregion
+
+		animator.SetTrigger("jumpTrigger");
 	}
 
 	private void WallJump(int dir)
@@ -574,6 +708,15 @@ public class PlayerMovement : MonoBehaviour
 	{
 		return IsWallJumping && RB.linearVelocity.y > 0;
 	}
+
+	// Player can slide when touching a wall, not jumping/wall-jumping, and not on the ground.
+	public bool CanSlide()
+	{
+		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0)
+			return true;
+		else
+			return false;
+	}
 	#endregion
 
 
@@ -605,11 +748,37 @@ public class PlayerMovement : MonoBehaviour
 			Gizmos.DrawWireCube(_groundCheckPoint.position, _groundCheckSize);
 
 		Gizmos.color = Color.blue;
-		if (_frontWallCheckPoint != null)
-			Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
+		if (_drawWallRays && _useRaycastWallCheck)
+		{
+			Collider2D col = _mainCollider != null ? _mainCollider : GetComponent<Collider2D>();
+			if (col != null)
+			{
+				Bounds b = col.bounds;
+				float halfWidth = b.extents.x;
+				float halfHeight = b.extents.y;
+				float vInset = Mathf.Clamp(_wallRayVerticalInset, 0f, Mathf.Max(0f, halfHeight - 0.01f));
 
-		if (_backWallCheckPoint != null)
-			Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
+				for (int dir = -1; dir <= 1; dir += 2)
+				{
+					float originX = b.center.x + dir * Mathf.Max(0f, halfWidth - 0.02f);
+					Vector3 top = new Vector3(originX, b.max.y - vInset, 0f);
+					Vector3 mid = new Vector3(originX, b.center.y, 0f);
+					Vector3 bot = new Vector3(originX, b.min.y + vInset, 0f);
+					Vector3 step = new Vector3(dir * _wallRayLength, 0f, 0f);
+
+					Gizmos.DrawLine(top, top + step);
+					Gizmos.DrawLine(mid, mid + step);
+					Gizmos.DrawLine(bot, bot + step);
+				}
+			}
+		}
+		else
+		{
+			if (_frontWallCheckPoint != null)
+				Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
+			if (_backWallCheckPoint != null)
+				Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
+		}
 	}
 	#endregion
 
@@ -646,6 +815,7 @@ public class PlayerMovement : MonoBehaviour
 		// Reset jump and movement states
 		IsJumping = false;
 		IsWallJumping = false;
+		IsSliding = false;
 		_isJumpCut = false;
 		_isJumpFalling = false;
 		_moveInput = Vector2.zero;

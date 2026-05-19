@@ -8,7 +8,7 @@ public class answerfield : MonoBehaviour
 
     // answer that reveals the platform, very choosy and needs to be specific 
     private const string correctAnswer = "HYPERTEXT MARKUP LANGUAGE";
-
+    //HERE ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     // the correct answer is in all caps to avoid issues with case sensitivity, but the check will ignore case
     // you can change this to whatever you want as long as it matches the correct answer in the check below
 
