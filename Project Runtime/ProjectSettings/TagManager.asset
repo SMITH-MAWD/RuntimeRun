@@ -49,5 +49,20 @@ TagManager:
   - name: Mask
     uniqueID: 3204643841
     locked: 0
+  - name: Sky
+    uniqueID: 994938021
+    locked: 0
+  - name: Back1
+    uniqueID: 202962929
+    locked: 0
+  - name: Back2
+    uniqueID: 1076703891
+    locked: 0
+  - name: Player
+    uniqueID: 889964355
+    locked: 0
+  - name: Front
+    uniqueID: 2506692457
+    locked: 0
   m_RenderingLayers:
   - Default
