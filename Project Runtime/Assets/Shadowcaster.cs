@@ -1,11 +1,15 @@
-﻿
+
 using System;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+// UnityEditor namespace is only available in the editor; guard it so
+// builds (which strip UnityEditor) don't fail with CS0246.
+using UnityEditor;
+#endif
 
 [ExecuteAlways]
 [DisallowMultipleComponent]
@@ -172,6 +176,8 @@ public class ShadowCaster2DCreator : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    // MenuItem and the bake action are editor-only tools; exclude from builds.
     [MenuItem("Tools/URP 2D/Bake All ShadowCasters in Scene")]
     public static void BakeAllInScene()
     {
@@ -181,8 +187,10 @@ public class ShadowCaster2DCreator : MonoBehaviour
 
         Debug.Log($"Baked shadow casters for {creators.Length} creator(s) in scene.");
     }
+#endif
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(ShadowCaster2DCreator))]
 public class ShadowCaster2DCreatorEditor : Editor
 {
@@ -200,3 +208,4 @@ public class ShadowCaster2DCreatorEditor : Editor
             t.Cleanup();
     }
 }
+#endif
