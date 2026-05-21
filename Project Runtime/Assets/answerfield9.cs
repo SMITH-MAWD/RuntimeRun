@@ -6,9 +6,22 @@ public class answerfield9 : MonoBehaviour
     [Tooltip("InputField where player types their answer. If left empty, the script will try to find an InputField on the same GameObject.")]
     public InputField inputField;
 
-    // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "INT";
-    private const string correctAnswer2 = "INTEGER";
+    // Many acceptable answers – case‑insensitive matching
+    private string[] correctAnswers = new string[]
+    {
+        "int",         // Java primitive keyword
+        "Int",         // players might capitalise
+        "INT",
+        "integer",     // English word
+        "Integer",     // Java wrapper class
+        "INTEGER",
+        "int ",
+        " int",
+        "integer ",
+        " integer",
+        "int;",
+        "int();"       // some might think it's a method, we'll still accept
+    };
 
     void Start()
     {
@@ -21,9 +34,7 @@ public class answerfield9 : MonoBehaviour
             return;
         }
 
-        // submit handler
         inputField.onEndEdit.AddListener(OnSubmit);
-        // player opens the field
         inputField.onValueChanged.AddListener(OnValueChanged);
     }
 
@@ -40,7 +51,6 @@ public class answerfield9 : MonoBehaviour
 
     private void OnValueChanged(string text)
     {
-        // Start timer on first letter typed 
         if (!timerStarted && !string.IsNullOrEmpty(text))
         {
             timerStarted = true;
@@ -50,15 +60,24 @@ public class answerfield9 : MonoBehaviour
         }
     }
 
-    // when player finishes answering or closes the console
     public void OnSubmit(string text)
     {
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase) || text.Trim().Equals(correctAnswer2, System.StringComparison.OrdinalIgnoreCase))
+        string trimmed = text.Trim();
+        bool isCorrect = false;
+        foreach (string answer in correctAnswers)
         {
-            // Stop timer on correct answer
+            if (trimmed.Equals(answer, System.StringComparison.OrdinalIgnoreCase))
+            {
+                isCorrect = true;
+                break;
+            }
+        }
+
+        if (isCorrect)
+        {
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
             if (timer != null)
                 timer.StopTimer();
@@ -79,14 +98,12 @@ public class answerfield9 : MonoBehaviour
                 Debug.LogWarning("answerfield: No smallplatscrpt instances found in the scene.");
             }
 
-            // clear the field when input correct 
             inputField.text = string.Empty;
             inputField.DeactivateInputField();
         }
         else
         {
             Debug.Log("answerfield: Incorrect answer entered: '" + text + "'");
-            // increment error counter but DO NOT stop timer
             errorscript errorTracker = Object.FindFirstObjectByType<errorscript>();
             if (errorTracker != null)
                 errorTracker.IncrementError();
@@ -95,7 +112,6 @@ public class answerfield9 : MonoBehaviour
 
     private void OnDisable()
     {
-        // if the answer field is like turned off without any answer inputted stop the timer
         if (timerStarted)
         {
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
