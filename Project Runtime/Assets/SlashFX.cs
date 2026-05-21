@@ -11,11 +11,6 @@ public class SlashFX : MonoBehaviour
     [Tooltip("Leave empty to use Hit1 / HitVar1 from this object's name.")]
     [SerializeField] private string eventName;
 
-    [Tooltip("If false, this FX keeps its authored local position/scale and is NOT mirrored when the character flips facing.")]
-    [SerializeField] private bool mirrorWithFacing = true;
-
-    public bool MirrorWithFacing => mirrorWithFacing;
-
     public string EventName
     {
         get
