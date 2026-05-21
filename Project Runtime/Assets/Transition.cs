@@ -9,8 +9,12 @@ public class Transition : MonoBehaviour
 {
     [Header("Scene Selection")]
     [Tooltip("Drag your target scene here from the Project window.")]
-    [SerializeField] private SceneAsset targetScene; // Editor-only
-    [SerializeField] private string sceneName; // Auto-filled, don't edit manually
+
+#if UNITY_EDITOR
+    [SerializeField] private SceneAsset targetScene;
+#endif
+
+    [SerializeField] private string sceneName; // Auto-filled from targetScene in OnValidate()
 
     [Header("Load Settings")]
     [SerializeField] private bool useAsyncLoad = false;
