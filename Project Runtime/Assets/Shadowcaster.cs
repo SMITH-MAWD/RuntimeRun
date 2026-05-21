@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -6,8 +5,6 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 #if UNITY_EDITOR
-// UnityEditor namespace is only available in the editor; guard it so
-// builds (which strip UnityEditor) don't fail with CS0246.
 using UnityEditor;
 #endif
 
@@ -17,12 +14,15 @@ public class ShadowCaster2DCreator : MonoBehaviour
 {
     [Header("Shadow Settings")]
     [SerializeField] private bool selfShadows = false;
-    [SerializeField] private string sortingLayerA = "BG";
-    [SerializeField] private string sortingLayerB = "Entities";
+    
+    // These fields are kept for future use, but shadows will now apply to
+    // ALL sorting layers by default. You can leave them empty.
+    [SerializeField] private string sortingLayerA = "";
+    [SerializeField] private string sortingLayerB = "";
 
     [Header("Generation")]
     [SerializeField] private string childPrefix = "__shadow_caster_";
-    [SerializeField] private bool markAsEditorOnly = true;
+    [SerializeField] private bool markAsEditorOnly = false;   // false = survive build
 
     // Reflection targets
     static FieldInfo fiShapePath, fiShapePathHash, fiApplyToSortingLayers;
@@ -65,7 +65,7 @@ public class ShadowCaster2DCreator : MonoBehaviour
         var allPaths = CollectPaths();
         if (allPaths.Count == 0)
         {
-            Debug.LogWarning($"No valid collider paths found on {name}");
+            Debug.LogWarning($"[{name}] No valid collider paths found – shadow casters not created.");
             return;
         }
 
@@ -85,15 +85,18 @@ public class ShadowCaster2DCreator : MonoBehaviour
 
             fiShapePath.SetValue(sc, path3);
             fiShapePathHash.SetValue(sc, DeterministicHash(path3));
-            fiApplyToSortingLayers.SetValue(sc, GetLayerIds());
+            
+            // 🔥 THE KEY FIX: Apply to ALL sorting layers (set to null)
+            // No more sorting‑layer mismatch in builds.
+            fiApplyToSortingLayers.SetValue(sc, null);
+
+            // Optional debug log (can be removed once you're confident it works)
+            Debug.Log($"[{name}] Created {go.name} – casts shadows on ALL sorting layers.", this);
 
 #if UNITY_EDITOR
-            // Tell Unity this object has been modified
             Undo.RegisterCreatedObjectUndo(go, "Create Shadow Caster");
             EditorUtility.SetDirty(go);
             PrefabUtility.RecordPrefabInstancePropertyModifications(go);
-
-            // Also mark the parent prefab root dirty
             EditorUtility.SetDirty(gameObject);
             PrefabUtility.RecordPrefabInstancePropertyModifications(this);
 
@@ -144,6 +147,7 @@ public class ShadowCaster2DCreator : MonoBehaviour
         return paths;
     }
 
+    // This method is no longer used in the main Create() logic, but kept for reference.
     int[] GetLayerIds()
     {
         var layers = SortingLayer.layers;
@@ -177,7 +181,6 @@ public class ShadowCaster2DCreator : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // MenuItem and the bake action are editor-only tools; exclude from builds.
     [MenuItem("Tools/URP 2D/Bake All ShadowCasters in Scene")]
     public static void BakeAllInScene()
     {
@@ -200,7 +203,7 @@ public class ShadowCaster2DCreatorEditor : Editor
         DrawDefaultInspector();
 
         EditorGUILayout.HelpBox("Generates baked ShadowCaster2D children from Composite, Polygon, or Box colliders.\n" +
-                                "This avoids runtime freezes caused by collider-sourced ShadowCasters.", MessageType.Info);
+                                "Shadows apply to ALL sorting layers (safe for builds).", MessageType.Info);
 
         if (GUILayout.Button("Bake Shadow Caster(s)"))
             t.Create();

@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
@@ -9,18 +8,20 @@ public class Transition : MonoBehaviour
 {
     [Header("Scene Selection")]
     [Tooltip("Drag your target scene here from the Project window.")]
-
 #if UNITY_EDITOR
     [SerializeField] private SceneAsset targetScene;
 #endif
-
-    [SerializeField] private string sceneName; // Auto-filled from targetScene in OnValidate()
+    [SerializeField] private string sceneName;   // Auto‑filled from targetScene in OnValidate()
 
     [Header("Load Settings")]
     [SerializeField] private bool useAsyncLoad = false;
     [SerializeField] private bool disableTriggerAfterUse = true;
 
-    [Header("Optional keybind")]
+    [Header("Fade Transition")]
+    [SerializeField] private bool useFadeTransition = true;
+    [SerializeField] private float fadeDuration = 1f;
+
+    [Header("Optional Keybind")]
     [SerializeField] private bool requireKeyPress = false;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
@@ -28,7 +29,6 @@ public class Transition : MonoBehaviour
     private bool _playerInRange;
 
 #if UNITY_EDITOR
-    // When a scene is assigned in the editor, extract its name
     private void OnValidate()
     {
         if (targetScene != null)
@@ -50,14 +50,12 @@ public class Transition : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-
         if (requireKeyPress)
         {
             _playerInRange = true;
             Debug.Log($"Press '{interactKey}' to go to '{sceneName}'");
             return;
         }
-
         TriggerLoad();
     }
 
@@ -84,22 +82,39 @@ public class Transition : MonoBehaviour
             return;
         }
 
-        if (useAsyncLoad)
-            StartCoroutine(LoadSceneAsyncRoutine());
+        if (useFadeTransition)
+        {
+            // Let the manager handle the fade and load
+            if (SceneTransitionManager.Instance == null)
+            {
+                Debug.LogError("No SceneTransitionManager found. Please add a GameObject with the SceneTransitionManager script to your initial scene.");
+                // Fallback to direct load
+                StartCoroutine(LoadDirectly());
+                return;
+            }
+            SceneTransitionManager.Instance.FadeAndLoad(sceneName, fadeDuration, useAsyncLoad);
+        }
         else
-            SceneManager.LoadScene(sceneName);
+        {
+            StartCoroutine(LoadDirectly());
+        }
     }
 
-    private IEnumerator LoadSceneAsyncRoutine()
+    private System.Collections.IEnumerator LoadDirectly()
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync(sceneName);
-        if (ao == null)
+        if (useAsyncLoad)
         {
-            Debug.LogError($"Failed to load scene '{sceneName}'. Make sure it's added to Build Settings.");
-            yield break;
+            AsyncOperation ao = SceneManager.LoadSceneAsync(sceneName);
+            if (ao != null)
+                while (!ao.isDone)
+                    yield return null;
+            else
+                Debug.LogError($"Failed to load scene '{sceneName}'. Make sure it's added to Build Settings.");
         }
-
-        while (!ao.isDone)
-            yield return null;
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
+        yield break;
     }
 }

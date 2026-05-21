@@ -12,7 +12,7 @@ public class answerfieldFin1 : MonoBehaviour
     [SerializeField] private Play_Ifttrue[] timelineControllers = new Play_Ifttrue[0];
 
     // Exact expected answer
-    private const string correctAnswer = "False";
+    private const string correctAnswer = "B";
 
     private bool timerStarted = false;
     private bool hasAnswered = false; // prevents re-triggering during this session

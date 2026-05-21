@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class answerfield15 : MonoBehaviour
 {
     [Tooltip("InputField where player types their answer. If left empty, the script will try to find an InputField on the same GameObject.")]
     public InputField inputField;
 
-    // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "PRINTING";
+    // Accept any of these answers (case-insensitive)
+    private static readonly string[] correctAnswers = { "PRINTING", "PRINTIN", "PRINT" };
 
     void Start()
     {
@@ -55,7 +56,9 @@ public class answerfield15 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
+        string cleanInput = text.Trim();
+
+        if (correctAnswers.Any(answer => string.Equals(cleanInput, answer, System.StringComparison.OrdinalIgnoreCase)))
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
@@ -64,7 +67,6 @@ public class answerfield15 : MonoBehaviour
             timerStarted = false;
 
             Debug.Log("answerfield: Correct answer entered. Revealing small platforms.");
-
 
             smallplatscrpt15[] platforms = Object.FindObjectsByType<smallplatscrpt15>(FindObjectsSortMode.None);
             if (platforms != null && platforms.Length > 0)

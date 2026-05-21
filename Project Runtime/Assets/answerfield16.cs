@@ -6,8 +6,25 @@ public class answerfield16 : MonoBehaviour
     [Tooltip("InputField where player types their answer. If left empty, the script will try to find an InputField on the same GameObject.")]
     public InputField inputField;
 
-    // answer that reveals the platform, very choosy and needs to be specific 
-    private const string correctAnswer = "SYSTEM.OUT.PRINT();";
+    // Multiple acceptable answers – feel free to add more in the Inspector or directly in code
+    private string[] correctAnswers = new string[]
+    {
+        "SYSTEM.OUT.PRINT();",          // original very picky answer
+        "System.out.print();",          // standard Java casing, with semicolon
+        "System.out.print()",           // without semicolon
+        "system.out.print();",
+        "system.out.print()",
+        "System.out.print(\"\");",      // with an empty string argument
+        "System.out.print(\"\")",
+        "System.out.print('');",
+        "System.out.print('')",
+        "System.out.print(\" \");",     // with a space
+        "System.out.print(\" \")",
+        "System.out.print(\"\");",      // etc.
+        "System.out.print()",           // just the method signature
+        "system.out.print ( )",         // spaces inside parentheses
+        "System.out.print ();"
+    };
 
     void Start()
     {
@@ -55,7 +72,18 @@ public class answerfield16 : MonoBehaviour
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (text.Trim().Equals(correctAnswer, System.StringComparison.OrdinalIgnoreCase))
+        string trimmed = text.Trim();
+        bool isCorrect = false;
+        foreach (string answer in correctAnswers)
+        {
+            if (trimmed.Equals(answer, System.StringComparison.OrdinalIgnoreCase))
+            {
+                isCorrect = true;
+                break;
+            }
+        }
+
+        if (isCorrect)
         {
             // Stop timer on correct answer
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();
@@ -64,7 +92,6 @@ public class answerfield16 : MonoBehaviour
             timerStarted = false;
 
             Debug.Log("answerfield: Correct answer entered. Revealing small platforms.");
-
 
             smallplatscrpt16[] platforms = Object.FindObjectsByType<smallplatscrpt16>(FindObjectsSortMode.None);
             if (platforms != null && platforms.Length > 0)
@@ -95,7 +122,7 @@ public class answerfield16 : MonoBehaviour
 
     private void OnDisable()
     {
-        // if the answer field is like turned off without any answer inputted stop the timer
+        // if the answer field is turned off without any answer inputted stop the timer
         if (timerStarted)
         {
             timetoanswer timer = Object.FindFirstObjectByType<timetoanswer>();

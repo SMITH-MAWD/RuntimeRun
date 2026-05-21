@@ -17,10 +17,30 @@ public class jumpboost : MonoBehaviour
     [Header("Bounce power")]
     [SerializeField] private float bouncePower = 25f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip bounceSound;
+    [SerializeField] private AudioSource audioSource;  // Optional â€“ auto-created if empty
+
     private bool playerInRange;
     private float lastWTime = -10f;
     private bool triggeredThisSession = false;
     private Rigidbody2D playerRb;
+
+    void Awake()
+    {
+        // If no AudioSource is assigned, create one
+        if (audioSource == null && bounceSound != null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // Make absolutely sure the sound never plays on its own
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D
+        }
+    }
 
     void Reset()
     {
@@ -72,24 +92,19 @@ public class jumpboost : MonoBehaviour
     {
         if (triggeredThisSession) return;
 
-        // Play Timeline (force restart)
+        PlayBounceSound();
+
         if (timelineToPlay != null)
         {
-            timelineToPlay.Stop();   // Stop if already playing
-            timelineToPlay.time = 0; // Rewind to beginning
-            timelineToPlay.Play();   // Start fresh
+            timelineToPlay.Stop();
+            timelineToPlay.time = 0;
+            timelineToPlay.Play();
         }
-        // Fallback to Animator
         else if (animator != null)
         {
             animator.SetTrigger(animationTriggerName);
         }
-        else
-        {
-            Debug.LogWarning("No Timeline or Animator – only bounce.");
-        }
 
-        // Apply bounce
         if (playerRb != null)
         {
             Vector2 vel = playerRb.linearVelocity;
@@ -98,6 +113,12 @@ public class jumpboost : MonoBehaviour
         }
 
         triggeredThisSession = true;
+    }
+
+    private void PlayBounceSound()
+    {
+        if (bounceSound == null || audioSource == null) return;
+        audioSource.PlayOneShot(bounceSound);
     }
 
     public void ResetTriggerLock()

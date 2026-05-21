@@ -1,9 +1,18 @@
 using UnityEngine;
+using System.Collections;
+
 public class console1 : MonoBehaviour
 {
     [Tooltip("Reference to the question box GameObject")]
     public GameObject questionBox;
+
+    [Header("Fade Settings")]
+    [SerializeField] private float fadeDuration = 0.4f;        // How long the fade takes
+    [SerializeField] private CanvasGroup questionCanvasGroup;  // Optional – auto-added if missing
+
     private bool isQuestionVisible = false;
+    private bool isFading = false;
+    private Coroutine currentFadeRoutine;
 
     // Track the most recently used console for respawn functionality
     private static console1 mostRecentConsole;
@@ -16,14 +25,12 @@ public class console1 : MonoBehaviour
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
-
         if (boxCollider == null)
         {
             Debug.LogWarning("Console1: No BoxCollider2D found on " + gameObject.name + ". Add a BoxCollider2D component with 'Is Trigger' enabled.");
         }
         else
         {
-            // Ensure the collider is set as a trigger
             boxCollider.isTrigger = true;
         }
 
@@ -38,7 +45,15 @@ public class console1 : MonoBehaviour
 
         if (questionBox != null)
         {
-            // hiding the question box
+            // Ensure a CanvasGroup exists for fading
+            if (questionCanvasGroup == null)
+                questionCanvasGroup = questionBox.GetComponent<CanvasGroup>();
+
+            if (questionCanvasGroup == null)
+                questionCanvasGroup = questionBox.AddComponent<CanvasGroup>();
+
+            // Start fully hidden (invisible and inactive)
+            questionCanvasGroup.alpha = 0f;
             questionBox.SetActive(false);
             isQuestionVisible = false;
         }
@@ -53,7 +68,7 @@ public class console1 : MonoBehaviour
 
     void Update()
     {
-        // Check if player is in range 
+        // Check if player is in range and presses Q
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.Q))
         {
             OnConsoleInteract();
@@ -62,7 +77,6 @@ public class console1 : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the colliding object has a PlayerMovement component
         if (collision.CompareTag("Player") || collision.GetComponent<PlayerMovement>() != null)
         {
             isPlayerInRange = true;
@@ -72,26 +86,14 @@ public class console1 : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        // Check if the colliding object is the player
         if (collision.CompareTag("Player") || collision.GetComponent<PlayerMovement>() != null)
         {
             isPlayerInRange = false;
 
-            // Close the console if player leaves range
-            if (isQuestionVisible)
+            // If the question is visible, close it with a fade-out
+            if (isQuestionVisible && questionBox != null)
             {
-                isQuestionVisible = false;
-                if (questionBox != null)
-                {
-                    questionBox.SetActive(false);
-                    Debug.Log("Question box hidden as player left range.");
-                }
-
-                // Re-enable player movement
-                if (cachedPlayer != null)
-                {
-                    cachedPlayer.inputEnabled = true;
-                }
+                CloseQuestion();
             }
 
             Debug.Log("Console1: Player out of range.");
@@ -103,19 +105,91 @@ public class console1 : MonoBehaviour
         // Mark this console as the most recently used
         mostRecentConsole = this;
 
-        if (questionBox != null)
+        if (questionBox == null) return;
+
+        // Toggle visibility
+        if (!isQuestionVisible)
         {
-            // visibility toggle
-            isQuestionVisible = !isQuestionVisible;
-            questionBox.SetActive(isQuestionVisible);
-            Debug.Log("Question box visibility toggled: " + (isQuestionVisible ? "visible" : "hidden"));
+            OpenQuestion();
+        }
+        else
+        {
+            CloseQuestion();
+        }
+    }
+
+    /// <summary>Opens the question box with a fade-in, and disables player movement.</summary>
+    private void OpenQuestion()
+    {
+        if (isQuestionVisible) return;
+
+        isQuestionVisible = true;
+
+        // Disable player input immediately
+        if (cachedPlayer != null)
+            cachedPlayer.inputEnabled = false;
+
+        // Start fade-in
+        StartFade(1f);
+    }
+
+    /// <summary>Closes the question box with a fade-out, and re‑enables player movement.</summary>
+    private void CloseQuestion()
+    {
+        if (!isQuestionVisible) return;
+
+        isQuestionVisible = false;
+
+        // Re‑enable player input immediately (so they can move while fading, if desired)
+        if (cachedPlayer != null)
+            cachedPlayer.inputEnabled = true;
+
+        // Start fade-out
+        StartFade(0f);
+    }
+
+    /// <summary>Starts a fade to the target alpha (0 or 1).</summary>
+    private void StartFade(float targetAlpha)
+    {
+        if (questionCanvasGroup == null) return;
+
+        // Stop any ongoing fade
+        if (currentFadeRoutine != null)
+            StopCoroutine(currentFadeRoutine);
+
+        // Ensure the GameObject is active when fading in
+        if (targetAlpha > 0f && !questionBox.activeSelf)
+            questionBox.SetActive(true);
+
+        currentFadeRoutine = StartCoroutine(FadeRoutine(targetAlpha));
+    }
+
+    private IEnumerator FadeRoutine(float targetAlpha)
+    {
+        isFading = true;
+        float startAlpha = questionCanvasGroup.alpha;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+            questionCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+            yield return null;
         }
 
-        // enable or disable the player movement when question box is open
-        if (cachedPlayer != null)
+        // Ensure exact final value
+        questionCanvasGroup.alpha = targetAlpha;
+
+        // Deactivate GameObject when completely invisible (to disable raycasts, etc.)
+        if (targetAlpha == 0f)
         {
-            // when question is visible = no movement
-            cachedPlayer.inputEnabled = !isQuestionVisible;
+            questionBox.SetActive(false);
+            // Reset alpha to 0 so it stays consistent next time it's activated
+            questionCanvasGroup.alpha = 0f;
         }
+
+        isFading = false;
+        currentFadeRoutine = null;
     }
 }
